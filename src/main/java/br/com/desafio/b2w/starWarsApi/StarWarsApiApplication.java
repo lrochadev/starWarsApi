@@ -11,8 +11,6 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
 /**
  * 
  * @author Leonardo Rocha
@@ -21,7 +19,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableMongoRepositories(value = "br.com.desafio.b2w.starWarsApi.repository", considerNestedRepositories = true)
 @EnableMongoAuditing
-@EnableSwagger2
 public class StarWarsApiApplication {
 
 	@Bean
@@ -29,7 +26,7 @@ public class StarWarsApiApplication {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 		Properties properties = new Properties();
 		properties.setProperty("fileEncodings", "UTF-8");
-		messageSource.setBasename("classpath:mensagem");
+		messageSource.setBasename("classpath:messages");
 		messageSource.setDefaultEncoding("UTF-8");
 		messageSource.setFileEncodings(properties);
 
