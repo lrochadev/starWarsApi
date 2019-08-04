@@ -4,7 +4,7 @@
 
 Fazer o checkout do projeto e na raiz acessar a pasta starWarsApi e executar o comando abaixo:
 
-- mvn clean install
+- mvn clean install -DskipTests
 
 Com o build realizado, executar o comando abaixo para criar os containers da API e MongoDB
 
