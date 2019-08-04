@@ -11,6 +11,8 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 /**
  * 
  * @author Leonardo Rocha
@@ -19,6 +21,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 @SpringBootApplication
 @EnableMongoRepositories(value = "br.com.desafio.b2w.starWarsApi.repository", considerNestedRepositories = true)
 @EnableMongoAuditing
+@EnableSwagger2
 public class StarWarsApiApplication {
 
 	@Bean
