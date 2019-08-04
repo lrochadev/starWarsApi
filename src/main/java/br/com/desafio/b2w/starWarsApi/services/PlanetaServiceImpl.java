@@ -23,7 +23,8 @@ public class PlanetaServiceImpl implements PlanetaService {
 	@Autowired
 	private MessageUtil message;
 
-	private SwapiService swapiServiceImpl;
+	@Autowired
+	private SwapiService swapiService;
 
 	@Autowired
 	private PlanetaRepository planetaRepository;
@@ -33,10 +34,10 @@ public class PlanetaServiceImpl implements PlanetaService {
 
 		String nomePlaneta = planeta.getNome();
 
-		SwapiDTO responseSwapi = this.swapiServiceImpl.consumirSwapi(nomePlaneta);
+		SwapiDTO responseSwapi = this.swapiService.consumirSwapi(nomePlaneta);
 
 		if (responseSwapi != null) {
-			Integer qtdAparicoesEmFilmes = this.swapiServiceImpl.getQuantidadeDeAparicoesEmFilmes(nomePlaneta, responseSwapi);
+			Integer qtdAparicoesEmFilmes = this.swapiService.getQuantidadeDeAparicoesEmFilmes(nomePlaneta, responseSwapi);
 			planeta.setQtdAparicoesEmFilmes(qtdAparicoesEmFilmes);
 		}
 
