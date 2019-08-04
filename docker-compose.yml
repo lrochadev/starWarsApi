@@ -1,0 +1,35 @@
+version : '3'
+services:
+  mongodb:
+    container_name: starwars-mongodb
+    image: mongo:3.6
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - ./data/db:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - production-network
+#    command: mongod --smallfiles --logpath=/dev/null # --quiet
+    
+  appserver:
+    container_name: starwars-api
+    build:
+      context: .
+      dockerfile: api.dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - production-network
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: starwars
+      MONGO_INITDB_DATABASE: starwars_db
+    depends_on:
+      - mongodb
+
+networks:
+  production-network:
+    driver: bridge
