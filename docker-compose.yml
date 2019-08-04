@@ -12,7 +12,6 @@ services:
       - 27017:27017
     networks:
       - production-network
-#    command: mongod --smallfiles --logpath=/dev/null # --quiet
     
   appserver:
     container_name: starwars-api
@@ -26,7 +25,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: starwars
-      MONGO_INITDB_DATABASE: starwars_db
     depends_on:
       - mongodb
 
