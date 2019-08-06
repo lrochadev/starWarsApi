@@ -45,7 +45,7 @@ public class PlanetaResourceTests {
 	}
 
 	@Test
-	public void criaPlaneta() throws IOException, Exception {
+	public void createPlanetAndVerifyIfContained() throws IOException, Exception {
 
 		Planeta planeta = new Planeta(null, "Yavin IV", "tropical", "jungle", 0);
 
@@ -59,9 +59,9 @@ public class PlanetaResourceTests {
 	@Test
 	public void getPlanetasWithStatus200() throws Exception {
 
-		criaPlaneta("Planeta2");
+		createPlanet("PlanetOne");
 
-		criaPlaneta("Planeta3");
+		createPlanet("PlanetTwo");
 
 		mockMvc.perform(get("/api/planetas").contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().is2xxSuccessful())
@@ -73,8 +73,8 @@ public class PlanetaResourceTests {
 		return new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsBytes(object);
 	}
 
-	private void criaPlaneta(String nomePlaneta) {
-		this.planetaRepository.save(new Planeta(null, nomePlaneta, "asuh", "haha", 0));
+	private void createPlanet(String nomePlaneta) {
+		this.planetaRepository.save(new Planeta(null, nomePlaneta, "tropical", "mountains", 0));
 	}
 
 }
