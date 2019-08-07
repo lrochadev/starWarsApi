@@ -13,3 +13,5 @@ Com o build realizado, executar o comando abaixo para criar os containers da API
 A partir de agora você poderá acessar os serviços pelos endpoints presentes no Swagger.
 
 ## Link de acesso ao Swagger: http://localhost:8080/swagger-ui.html
+
+![Cat](https://i.imgur.com/6Ccwex0.png)
