@@ -2,7 +2,7 @@
 
 ## Instruções:
 
-Fazer o checkout do projeto e na raiz acessar a pasta starWarsApi e executar o comando abaixo:
+Fazer o checkout do projeto e na raiz, executar o comando abaixo:
 
 - mvn clean install
 
