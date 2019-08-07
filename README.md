@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/lrochadev/starWarsApi/tree/ci.svg?style=svg)](https://circleci.com/gh/lrochadev/starWarsApi/tree/ci)
+[![CircleCI](https://circleci.com/gh/lrochadev/starWarsApi/tree/master.svg?style=svg)](https://circleci.com/gh/lrochadev/starWarsApi/tree/master)
 
 # StarWarsAPI
 
