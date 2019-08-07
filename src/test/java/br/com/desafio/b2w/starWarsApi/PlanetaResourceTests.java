@@ -65,13 +65,13 @@ public class PlanetaResourceTests {
 
     
     @Test
-    public void getPlanetasByIdWhenIdAreCorrectShouldReturnStatusCode200() {
+    public void getPlanetaByIdWhenIdAreCorrectShouldReturnStatusCode200() {
         ResponseEntity<Planeta> response = restTemplate.getForEntity("/api/planetas/{id}", Planeta.class, "1");
         Assertions.assertThat(response.getStatusCodeValue()).isEqualTo(200);
     }
 
     @Test
-    public void getPlanetasByIdWhenPlanetaDoesNotExistShouldReturnStatusCode404() {
+    public void getPlanetaByIdWhenPlanetaDoesNotExistShouldReturnStatusCode404() {
         ResponseEntity<Planeta> response = restTemplate.getForEntity("/api/planetas/{id}", Planeta.class, "-1");
         Assertions.assertThat(response.getStatusCodeValue()).isEqualTo(404);
     }
