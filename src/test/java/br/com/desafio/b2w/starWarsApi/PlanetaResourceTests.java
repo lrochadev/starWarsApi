@@ -57,7 +57,7 @@ public class PlanetaResourceTests {
 	
     @Test
     public void listPlanetasShouldReturnStatusCode200() {
-        List<Planeta> planetas = asList(new Planeta("1", "Legolas", "tropical", "mountains", 0), new Planeta("2", "Aragorn", "tropical", "mountains", 0));
+        List<Planeta> planetas = asList(new Planeta("1", "Endor", "tropical", "mountains", 0), new Planeta("2", "Aragorn", "tropical", "mountains", 0));
         BDDMockito.when(planetaRepository.findAll()).thenReturn(planetas);
         ResponseEntity<String> response = restTemplate.getForEntity("/api/planetas/", String.class);
         Assertions.assertThat(response.getStatusCodeValue()).isEqualTo(200);
@@ -93,7 +93,7 @@ public class PlanetaResourceTests {
     
     @Test
     public void createShouldPersistDataAndReturnStatusCode201() throws Exception{
-        Planeta planeta = new Planeta("3", "Alderaan", "tropical", "mountains", 0);
+        Planeta planeta = new Planeta("3", "Naboo", "tropical", "mountains", 0);
         BDDMockito.when(planetaRepository.save(planeta)).thenReturn(planeta);
         ResponseEntity<String> response = restTemplate.postForEntity("/api/planetas/", planeta, String.class);
         Assertions.assertThat(response.getStatusCodeValue()).isEqualTo(201);
