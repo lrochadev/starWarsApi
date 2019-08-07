@@ -29,6 +29,9 @@ public class PlanetaServiceImpl implements PlanetaService {
 	@Autowired
 	private PlanetaRepository planetaRepository;
 
+	/**
+	 * Salva o planeta na base de dados.
+	 */
 	@Override
 	public Planeta save(Planeta planeta) {
 
@@ -44,6 +47,9 @@ public class PlanetaServiceImpl implements PlanetaService {
 		return planetaRepository.save(planeta);
 	}
 
+	/**
+	 * Verifica se o planeta existe antes de deletar. Caso não exista, uma lança uma PlanetaInexistenteException.
+	 */
 	@Override
 	public void delete(String id) {
 		if (this.findById(id) != null) {
@@ -53,7 +59,7 @@ public class PlanetaServiceImpl implements PlanetaService {
 
 	@Override
 	public Optional<List<Planeta>> findByNome(String nome) {
-		return planetaRepository.findByNome(nome);
+		return planetaRepository.findByNomeIgnoreCaseContaining(nome);
 	}
 
 	@Override

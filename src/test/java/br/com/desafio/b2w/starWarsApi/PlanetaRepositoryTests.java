@@ -19,6 +19,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import br.com.desafio.b2w.starWarsApi.model.Planeta;
 import br.com.desafio.b2w.starWarsApi.repository.PlanetaRepository;
 
+/**
+ * 
+ * @author Leonardo Rocha
+ *
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class PlanetaRepositoryTests {

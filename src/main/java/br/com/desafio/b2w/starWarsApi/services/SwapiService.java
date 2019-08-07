@@ -28,7 +28,12 @@ public class SwapiService {
 
 	@Autowired
 	private MessageUtil message;
-
+	
+	/**
+	 * Método responsável por buscar informalções do Planeta em uma API externa (SWAPI).
+	 * @param nomePlaneta
+	 * @return SwapiDTO
+	 */
 	public SwapiDTO consumirSwapi(String nomePlaneta) {
 
 		logger.info("Consumindo SWAPI.");
@@ -53,6 +58,12 @@ public class SwapiService {
 		return null;
 	}
 
+	/**
+	 * Recupera a quantidade de aparições em filmes.
+	 * @param nomePlaneta
+	 * @param retornoSwapi
+	 * @return Integer
+	 */
 	public Integer getQuantidadeDeAparicoesEmFilmes(String nomePlaneta, SwapiDTO retornoSwapi) {
 		
 		PlanetaDTO planetaDTO = retornoSwapi.getResults()

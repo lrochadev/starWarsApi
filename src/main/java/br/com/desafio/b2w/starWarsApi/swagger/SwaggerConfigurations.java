@@ -15,6 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 /**
  * 
  * @author Leonardo Rocha
+ * Classe responsável por popular todas as informações no SWAGGER.
  *
  */
 @Configuration

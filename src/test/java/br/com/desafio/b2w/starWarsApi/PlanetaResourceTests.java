@@ -27,7 +27,7 @@ import br.com.desafio.b2w.starWarsApi.repository.PlanetaRepository;
 
 /**
  * 
- * @author Leonardo de Souza Rocha
+ * @author Leonardo Rocha
  *
  */
 @RunWith(SpringRunner.class)
