@@ -41,9 +41,7 @@ public class PlanetaServiceImpl implements PlanetaService {
 			planeta.setQtdAparicoesEmFilmes(qtdAparicoesEmFilmes);
 		}
 
-		planetaRepository.save(planeta);
-
-		return null;
+		return planetaRepository.save(planeta);
 	}
 
 	@Override

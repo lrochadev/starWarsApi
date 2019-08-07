@@ -68,6 +68,13 @@
 			<version>2.9.2</version>
 		</dependency>
 
+		<!-- baeldung: provides embedded MongoDB for integration tests. -->
+		<dependency>
+			<groupId>de.flapdoodle.embed</groupId>
+			<artifactId>de.flapdoodle.embed.mongo</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
