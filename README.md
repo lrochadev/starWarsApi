@@ -1,4 +1,5 @@
 [![CircleCI](https://circleci.com/gh/lrochadev/starWarsApi/tree/master.svg?style=svg)](https://circleci.com/gh/lrochadev/starWarsApi/tree/master)
+![Java CI](https://github.com/lrochadev/starWarsApi/workflows/Java%20CI/badge.svg?branch=master)
 
 # StarWarsAPI
 
