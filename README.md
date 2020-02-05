@@ -8,7 +8,7 @@ Fazer o checkout do projeto e na raiz, executar o comando abaixo:
 
 - mvn clean install
 
-Com o build realizado, executar o comando abaixo para criar os containers da API e MongoDB
+Com o build realizado, executar o comando abaixo para criar os containers da API e MongoDB.
 
 - docker-compose up
 
