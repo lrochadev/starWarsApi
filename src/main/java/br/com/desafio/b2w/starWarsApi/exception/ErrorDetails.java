@@ -3,6 +3,7 @@ package br.com.desafio.b2w.starWarsApi.exception;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 /**
  * 
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 public class ErrorDetails {
     private int status;
     private String detail;

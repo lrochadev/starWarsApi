@@ -1,27 +1,18 @@
 package br.com.desafio.b2w.starWarsApi.resources;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import br.com.desafio.b2w.starWarsApi.model.Planeta;
+import br.com.desafio.b2w.starWarsApi.services.PlanetaService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-import br.com.desafio.b2w.starWarsApi.model.Planeta;
-import br.com.desafio.b2w.starWarsApi.services.PlanetaService;
-import io.swagger.annotations.ApiOperation;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 
@@ -33,8 +24,12 @@ import io.swagger.annotations.ApiOperation;
 @PropertySource("classpath:messages.properties")
 public class PlanetaResource {
 
+	private final PlanetaService planetaService;
+
 	@Autowired
-	private PlanetaService planetaService;
+	public PlanetaResource(PlanetaService planetaService) {
+		this.planetaService = planetaService;
+	}
 
 	/*
 	 * Retorna a lista com todos os planetas cadastrados.
@@ -50,7 +45,7 @@ public class PlanetaResource {
 	 */
 	@PostMapping
 	@ApiOperation(value = "${msg.info.swagger.endpoint.planeta.create}", response = Planeta[].class)
-	public ResponseEntity<Planeta> create(@Valid @RequestBody Planeta planeta, HttpServletResponse response) {
+	public ResponseEntity<Planeta> create(@Validated @RequestBody Planeta planeta, HttpServletResponse response) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(this.planetaService.save(planeta));
 	}
 

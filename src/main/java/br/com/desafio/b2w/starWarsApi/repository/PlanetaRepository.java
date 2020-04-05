@@ -12,7 +12,6 @@ import br.com.desafio.b2w.starWarsApi.model.Planeta;
  * @author Leonardo Rocha
  *
  */
-public  interface PlanetaRepository extends MongoRepository<Planeta, String>{
-	Optional<List<Planeta>> findByNome(String nome);
+public interface PlanetaRepository extends MongoRepository<Planeta, String>{
 	Optional<List<Planeta>> findByNomeIgnoreCaseContaining(String nome);
 }

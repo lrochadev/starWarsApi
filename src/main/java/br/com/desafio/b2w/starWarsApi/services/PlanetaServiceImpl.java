@@ -20,14 +20,16 @@ import br.com.desafio.b2w.starWarsApi.utils.MessageUtil;
 @Service
 public class PlanetaServiceImpl implements PlanetaService {
 
-	@Autowired
-	private MessageUtil message;
+	private final MessageUtil message;
+	private final SwapiService swapiService;
+	private final PlanetaRepository planetaRepository;
 
 	@Autowired
-	private SwapiService swapiService;
-
-	@Autowired
-	private PlanetaRepository planetaRepository;
+	public PlanetaServiceImpl(MessageUtil message, SwapiService swapiService, PlanetaRepository planetaRepository) {
+		this.message = message;
+		this.swapiService = swapiService;
+		this.planetaRepository = planetaRepository;
+	}
 
 	/**
 	 * Salva o planeta na base de dados.
@@ -35,13 +37,10 @@ public class PlanetaServiceImpl implements PlanetaService {
 	@Override
 	public Planeta save(Planeta planeta) {
 
-		String nomePlaneta = planeta.getNome();
-
-		SwapiDTO responseSwapi = this.swapiService.consumirSwapi(nomePlaneta);
+		SwapiDTO responseSwapi = this.swapiService.consumirSwapi(planeta.getNome());
 
 		if (responseSwapi != null) {
-			Integer qtdAparicoesEmFilmes = this.swapiService.getQuantidadeDeAparicoesEmFilmes(nomePlaneta, responseSwapi);
-			planeta.setQtdAparicoesEmFilmes(qtdAparicoesEmFilmes);
+			planeta.setQtdAparicoesEmFilmes(this.swapiService.getQuantidadeDeAparicoesEmFilmes(planeta.getNome(), responseSwapi));
 		}
 
 		return planetaRepository.save(planeta);
