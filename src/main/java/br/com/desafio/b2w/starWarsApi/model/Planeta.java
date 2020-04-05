@@ -24,17 +24,14 @@ public class Planeta {
     @Id
     private String id;
 
-    @NotNull
-    @NotEmpty(message = "Nomé é obrigatório")
+    @NotEmpty(message = "Nome é obrigatório")
     private String nome;
     
-    @NotNull
     @NotEmpty(message = "Clima é obrigatório")
     private String clima;
 
-    @NotNull
     @NotEmpty(message = "Terreno é obrigatório")
     private String terreno;
 
-    private Integer qtdAparicoesEmFilmes = 0;
+    private int qtdAparicoesEmFilmes = 0;
 }
