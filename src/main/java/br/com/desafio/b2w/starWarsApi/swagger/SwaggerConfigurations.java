@@ -37,7 +37,7 @@ public class SwaggerConfigurations {
 				.title("Star Wars API")
 				.description("API que contém dados de planetas.")
 				.version("1.0")
-				.contact(new Contact("Leonardo Rocha", "https://leonardorocha.dev/", "lrochadev@gmail.com"))
+				.contact(new Contact("Leonardo Rocha", "https://github.com/lrochadev", "lrochadev@gmail.com"))
 				.license("Apache License Version 2.0")
 				.licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")
 				.build();
