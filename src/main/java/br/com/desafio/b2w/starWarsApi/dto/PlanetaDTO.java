@@ -9,9 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 
  * @author Leonardo Rocha
- *
  */
 @Data
 @AllArgsConstructor
@@ -19,20 +17,20 @@ import java.util.List;
 @JsonIgnoreProperties
 public class PlanetaDTO implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String name;
-	private String url;
-	private String rotation_period;
-	private String orbital_period;
-	private String diameter;
-	private String climate;
-	private String gravity;
-	private String terrain;
-	private String surface_water;
-	private String population;
-	private String created;
-	private String edited;
-	private List<String> films;
-	private List<String> residents;
+    private String name;
+    private String url;
+    private String rotation_period;
+    private String orbital_period;
+    private String diameter;
+    private String climate;
+    private String gravity;
+    private String terrain;
+    private String surface_water;
+    private String population;
+    private String created;
+    private String edited;
+    private List<String> films;
+    private List<String> residents;
 }

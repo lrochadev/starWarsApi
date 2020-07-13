@@ -11,28 +11,26 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import java.util.Properties;
 
 /**
- *
  * @author Leonardo Rocha
- *
  */
 @SpringBootApplication
 @EnableMongoRepositories(value = "br.com.desafio.b2w.starWarsApi.repository", considerNestedRepositories = true)
 @EnableMongoAuditing
 public class StarWarsApiApplication {
 
-	@Bean
-	public MessageSource messageSource() {
-		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-		Properties properties = new Properties();
-		properties.setProperty("fileEncodings", "UTF-8");
-		messageSource.setBasename("classpath:messages");
-		messageSource.setDefaultEncoding("UTF-8");
-		messageSource.setFileEncodings(properties);
+    public static void main(String[] args) {
+        SpringApplication.run(StarWarsApiApplication.class, args);
+    }
 
-		return messageSource;
-	}
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        Properties properties = new Properties();
+        properties.setProperty("fileEncodings", "UTF-8");
+        messageSource.setBasename("classpath:messages");
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setFileEncodings(properties);
 
-	public static void main(String[] args) {
-		SpringApplication.run(StarWarsApiApplication.class, args);
-	}
+        return messageSource;
+    }
 }

@@ -6,9 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 /**
- * 
  * @author Leonardo Rocha
- *
  */
 @Data
 @AllArgsConstructor

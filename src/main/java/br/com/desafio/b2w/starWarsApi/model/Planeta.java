@@ -8,12 +8,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 /**
- * 
  * @author Leonardo Rocha
- *
  */
 @Data
 @AllArgsConstructor
@@ -26,7 +23,7 @@ public class Planeta {
 
     @NotEmpty(message = "Nome é obrigatório")
     private String nome;
-    
+
     @NotEmpty(message = "Clima é obrigatório")
     private String clima;
 
