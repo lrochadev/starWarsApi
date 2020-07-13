@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -36,15 +37,15 @@ public class StarWarsApiExceptionHandler extends ResponseEntityExceptionHandler 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
-																  HttpStatus status,
-																  WebRequest request) {
+                                                                  HttpStatus status,
+                                                                  WebRequest request) {
 
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
 
         String fields = String.join(",", fieldErrors.stream().map(FieldError::getField).collect(toSet()));
 
         ValidationErrorDetails
-         vedDetails = ValidationErrorDetails
+                vedDetails = ValidationErrorDetails
                 .builder()
                 .status(BAD_REQUEST.value())
                 .title("Ocorreu um erro!")
@@ -69,7 +70,12 @@ public class StarWarsApiExceptionHandler extends ResponseEntityExceptionHandler 
         return new ResponseEntity<>(getError(ex, INTERNAL_SERVER_ERROR), INTERNAL_SERVER_ERROR);
     }
 
-    private ErrorDetails getError(RuntimeException ex, HttpStatus status) {
+    @Override
+    public ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return new ResponseEntity<>(getError(ex, BAD_REQUEST), BAD_REQUEST);
+    }
+
+    private ErrorDetails getError(Exception ex, HttpStatus status) {
         return ErrorDetails
                 .builder()
                 .status(status.value())
