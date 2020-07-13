@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
@@ -24,17 +25,15 @@ import static java.util.Optional.ofNullable;
 @Service
 public class SwapiService {
 
-	@Value("${starwars.api.url}")
-	private String starWarsApiUrl;
+    private static final Logger logger = LogManager.getLogger(SwapiService.class);
+    private final MessageUtil message;
+    @Value("${starwars.api.url}")
+    private String starWarsApiUrl;
 
-	private final MessageUtil message;
-
-	private static final Logger logger = LogManager.getLogger(SwapiService.class);
-
-	@Autowired
-	public SwapiService(MessageUtil message) {
-		this.message = message;
-	}
+    @Autowired
+    public SwapiService(MessageUtil message) {
+        this.message = message;
+    }
 
     /**
      * Método responsável por buscar informalções do Planeta em uma API externa (SWAPI).
@@ -44,7 +43,7 @@ public class SwapiService {
      */
     public SwapiDTO consumirSwapi(String nomePlaneta) {
 
-        logger.info("Consumindo SWAPI.");
+        logger.info("Buscando planeta: {}, na SWAPI.", nomePlaneta);
 
         try {
 
@@ -53,10 +52,11 @@ public class SwapiService {
             ResponseEntity<SwapiDTO> response = restTemplate.getForEntity(this.starWarsApiUrl + nomePlaneta, SwapiDTO.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
+                logger.info("Planeta: {} encontrado!", nomePlaneta);
                 return response.getBody();
             }
 
-        } catch (Exception e) {
+        } catch (RestClientException e) {
             logger.error(e.getMessage(), e);
             throw new SWAPIException(this.message.getMessage("mensagem.erro.swapi"));
         }
