@@ -37,6 +37,7 @@ public class PlanetaResourceTests {
 
     @MockBean
     private PlanetaRepository planetaRepository;
+
     @Autowired
     private TestRestTemplate restTemplate;
 
