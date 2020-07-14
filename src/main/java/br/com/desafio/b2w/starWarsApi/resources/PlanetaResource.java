@@ -3,7 +3,7 @@ package br.com.desafio.b2w.starWarsApi.resources;
 import br.com.desafio.b2w.starWarsApi.model.Planeta;
 import br.com.desafio.b2w.starWarsApi.services.PlanetaService;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +20,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/planetas")
 @PropertySource("classpath:messages.properties")
+@RequiredArgsConstructor
 public class PlanetaResource {
 
     private final PlanetaService planetaService;
-
-    @Autowired
-    public PlanetaResource(PlanetaService planetaService) {
-        this.planetaService = planetaService;
-    }
 
     @GetMapping
     @ApiOperation(value = "${msg.info.swagger.endpoint.planeta.list}", response = Planeta[].class)

@@ -1,24 +1,22 @@
 package br.com.desafio.b2w.starWarsApi.utils;
 
-import java.util.Locale;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Locale;
+
 /**
- * 
  * @author Leonardo Rocha
- *
  */
 @Configuration
+@RequiredArgsConstructor
 public class MessageUtil {
 
-	@Autowired
-	private MessageSource messageSource;
+    private final MessageSource messageSource;
 
-	public String getMessage(String msg, String... values) {
-		Locale.setDefault(new Locale("pt", "BR"));
-		return messageSource.getMessage(msg, values, Locale.getDefault());
-	}
+    public String getMessage(String msg, String... values) {
+        Locale.setDefault(new Locale("pt", "BR"));
+        return messageSource.getMessage(msg, values, Locale.getDefault());
+    }
 }

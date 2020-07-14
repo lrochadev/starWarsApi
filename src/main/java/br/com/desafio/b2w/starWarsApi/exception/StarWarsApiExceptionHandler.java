@@ -1,7 +1,7 @@
 package br.com.desafio.b2w.starWarsApi.exception;
 
 import br.com.desafio.b2w.starWarsApi.utils.MessageUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,14 +25,10 @@ import static org.springframework.http.HttpStatus.*;
  * @author Leonardo Rocha
  */
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class StarWarsApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final MessageUtil message;
-
-    @Autowired
-    public StarWarsApiExceptionHandler(MessageUtil message) {
-        this.message = message;
-    }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,

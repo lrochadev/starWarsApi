@@ -5,7 +5,7 @@ import br.com.desafio.b2w.starWarsApi.exception.PlanetaInexistenteException;
 import br.com.desafio.b2w.starWarsApi.model.Planeta;
 import br.com.desafio.b2w.starWarsApi.repository.PlanetaRepository;
 import br.com.desafio.b2w.starWarsApi.utils.MessageUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,18 +17,12 @@ import static java.util.Objects.nonNull;
  * @author Leonardo Rocha
  */
 @Service
+@RequiredArgsConstructor
 public class PlanetaServiceImpl implements PlanetaService {
 
     private final MessageUtil message;
     private final SwapiService swapiService;
     private final PlanetaRepository planetaRepository;
-
-    @Autowired
-    public PlanetaServiceImpl(MessageUtil message, SwapiService swapiService, PlanetaRepository planetaRepository) {
-        this.message = message;
-        this.swapiService = swapiService;
-        this.planetaRepository = planetaRepository;
-    }
 
     @Override
     public Planeta save(Planeta planeta) {
@@ -56,8 +50,8 @@ public class PlanetaServiceImpl implements PlanetaService {
 
     @Override
     public Planeta findById(String id) {
-        return planetaRepository.findById(id).orElseThrow(
-                () -> new PlanetaInexistenteException(message.getMessage("mensagem.erro.planeta.inexistente")));
+        return planetaRepository.findById(id)
+                .orElseThrow(() -> new PlanetaInexistenteException(message.getMessage("mensagem.erro.planeta.inexistente")));
     }
 
     @Override
