@@ -9,11 +9,11 @@
         <version>2.2.6.RELEASE</version>
         <relativePath/>
     </parent>
-    <groupId>br.com.desafio.b2w</groupId>
+    <groupId>br.com.challenge.b2w</groupId>
     <artifactId>starWarsApi</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>starWarsApi</name>
-    <description>API que contem dados de planetas.</description>
+    <description>API containing planets data.</description>
 
     <properties>
         <java.version>11</java.version>
@@ -102,7 +102,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>br.com.desafio.b2w.starWarsApi.StarWarsApiApplication</mainClass>
+                    <mainClass>br.com.challenge.b2w.starWarsApi.StarWarsApiApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>
