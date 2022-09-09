@@ -36,11 +36,11 @@ public class StarWarsApiExceptionHandler extends ResponseEntityExceptionHandler 
                                                                   HttpStatus status,
                                                                   WebRequest request) {
 
-        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
+        final List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
 
-        String fields = String.join(",", fieldErrors.stream().map(FieldError::getField).collect(toSet()));
+        final String fields = String.join(",", fieldErrors.stream().map(FieldError::getField).collect(toSet()));
 
-        ValidationErrorDetails
+        final ValidationErrorDetails
                 vedDetails = ValidationErrorDetails
                 .builder()
                 .status(BAD_REQUEST.value())

@@ -8,6 +8,7 @@ import br.com.challenge.b2w.starWarsApi.utils.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,11 +26,12 @@ public class PlanetServiceImpl implements PlanetService {
     private final PlanetRepository planetRepository;
 
     @Override
-    public Planet save(Planet planet) {
+    public Planet save(final Planet planet) {
 
-        SwapiDTO responseSwapi = this.swapiService.consultSwAPI(planet.getName());
+        final SwapiDTO responseSwapi = this.swapiService.consultSwAPI(planet.getName());
 
         if (nonNull(responseSwapi)) {
+            responseSwapi.setResult(null);
             planet.setQuantityOfApparitionInMovies(this.swapiService.getQuantityOfApparitionInMovies(planet.getName(), responseSwapi));
         }
 
@@ -44,12 +46,12 @@ public class PlanetServiceImpl implements PlanetService {
     }
 
     @Override
-    public Optional<List<Planet>> findByName(String nome) {
+    public Optional<List<Planet>> findByName(final String nome) {
         return planetRepository.findByNameIgnoreCaseContaining(nome);
     }
 
     @Override
-    public Planet findById(String id) {
+    public Planet findById(final String id) {
         return planetRepository.findById(id)
                 .orElseThrow(() -> new PlanetNotFoundException(message.getMessage("error.message.planet.notfound")));
     }
