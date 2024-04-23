@@ -1,25 +1,18 @@
 package br.com.challenge.b2w.starWarsApi.services;
 
-import br.com.challenge.b2w.starWarsApi.dto.PlanetDTO;
-import br.com.challenge.b2w.starWarsApi.dto.PropertiesDTO;
 import br.com.challenge.b2w.starWarsApi.dto.SwapiDTO;
 import br.com.challenge.b2w.starWarsApi.exception.SWAPIException;
 import br.com.challenge.b2w.starWarsApi.utils.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import static java.util.Optional.ofNullable;
 
