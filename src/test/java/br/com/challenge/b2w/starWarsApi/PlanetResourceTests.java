@@ -2,9 +2,8 @@ package br.com.challenge.b2w.starWarsApi;
 
 import br.com.challenge.b2w.starWarsApi.model.Planet;
 import br.com.challenge.b2w.starWarsApi.repository.PlanetRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +13,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +25,6 @@ import static org.springframework.http.HttpMethod.DELETE;
 /**
  * @author Leonardo Rocha
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PlanetResourceTests {
 
@@ -40,7 +37,7 @@ public class PlanetResourceTests {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Optional<Planet> planet = Optional.of(new Planet("1", "Alderaan", "temperate", "mountains", 0));
         when(planetRepository.findById(planet.get().getId())).thenReturn(planet);

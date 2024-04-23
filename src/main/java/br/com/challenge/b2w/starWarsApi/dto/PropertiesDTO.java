@@ -10,15 +10,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SwapiDTO implements Serializable {
+public class PropertiesDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private List<PropertiesDTO> result;
+    private PlanetDTO properties;
+
+    private String description;
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PlanetDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -31,6 +32,6 @@ public class PlanetDTO implements Serializable {
     private String population;
     private String created;
     private String edited;
-    private List<String> films;
+    private List<String> films = new LinkedList<>();
     private List<String> residents;
 }
