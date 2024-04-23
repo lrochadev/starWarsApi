@@ -1,4 +1,4 @@
-package br.com.challenge.b2w.starWarsApi.swagger;
+package br.com.challenge.b2w.starWarsApi.infrastructure;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
