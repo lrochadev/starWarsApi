@@ -2,41 +2,42 @@ package br.com.challenge.b2w.starWarsApi;
 
 import br.com.challenge.b2w.starWarsApi.model.Planet;
 import br.com.challenge.b2w.starWarsApi.repository.PlanetRepository;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Leonardo Rocha
  */
-@RunWith(SpringRunner.class)
-@DataMongoTest
+@DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
+@ExtendWith(SpringExtension.class)
+@TestPropertySource(properties = {
+        "restTemplate.pool.connectionRequestTimeout=1000"
+})
 public class PlanetRepositoryTests {
 
     @Autowired
     private PlanetRepository planetRepository;
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    @Before
+    @BeforeEach
     public void clearBeforeInit() {
         clearDb();
     }
 
-    @After
+    @AfterEach
     public void clearAfterInit() {
         clearDb();
     }
@@ -90,8 +91,7 @@ public class PlanetRepositoryTests {
 
     @Test
     public void createWhenNameIsNullShouldThrowIllegalArgumentException() {
-        thrown.expect(IllegalArgumentException.class);
-        this.planetRepository.save(null);
+        assertThrows(IllegalArgumentException.class, () -> this.planetRepository.save(null));
     }
 
     private void clearDb() {
