@@ -4,6 +4,7 @@ import br.com.challenge.b2w.starWarsApi.utils.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -31,10 +32,7 @@ public class StarWarsApiExceptionHandler extends ResponseEntityExceptionHandler 
     private final MessageUtil message;
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                                  HttpHeaders headers,
-                                                                  HttpStatus status,
-                                                                  WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
         final List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
 
@@ -53,8 +51,8 @@ public class StarWarsApiExceptionHandler extends ResponseEntityExceptionHandler 
                 .build();
 
         return new ResponseEntity<>(vedDetails, BAD_REQUEST);
-
     }
+
 
     @ExceptionHandler(PlanetNotFoundException.class)
     public final ResponseEntity<?> handlePlanetNotFoundException(PlanetNotFoundException ex) {
@@ -67,7 +65,7 @@ public class StarWarsApiExceptionHandler extends ResponseEntityExceptionHandler 
     }
 
     @Override
-    public ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return new ResponseEntity<>(getError(ex, BAD_REQUEST), BAD_REQUEST);
     }
 
