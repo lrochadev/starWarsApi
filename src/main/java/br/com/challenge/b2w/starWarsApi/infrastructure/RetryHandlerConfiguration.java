@@ -1,11 +1,14 @@
 package br.com.challenge.b2w.starWarsApi.infrastructure;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpStatus;
-import org.apache.http.NoHttpResponseException;
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpCoreContext;
+import org.apache.hc.client5.http.HttpRequestRetryStrategy;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.NoHttpResponseException;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.http.protocol.HttpCoreContext;
+import org.apache.hc.core5.util.TimeValue;
 
 import javax.net.ssl.SSLException;
 import java.io.IOException;
@@ -16,7 +19,7 @@ import java.net.UnknownHostException;
 import java.util.HashSet;
 
 @Slf4j
-public class RetryHandlerConfiguration implements HttpRequestRetryHandler {
+public class RetryHandlerConfiguration implements HttpRequestRetryStrategy {
     private final static HashSet<Class<?>> exceptionWhitelist = new HashSet<>();
     private final static HashSet<Class<?>> exceptionBlacklist = new HashSet<>();
 
@@ -37,12 +40,14 @@ public class RetryHandlerConfiguration implements HttpRequestRetryHandler {
         this.retrySleepTimeMS = retrySleepTimeMS;
     }
 
-    public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
+    @Override
+    public boolean retryRequest(HttpRequest httpRequest, IOException exception, int executionCount, HttpContext context) {
         boolean retry = true;
         int statusCode = 0;
 
         try {
-            statusCode = HttpCoreContext.adapt(context).getResponse().getStatusLine().getStatusCode();
+
+            statusCode = HttpCoreContext.adapt(context).getResponse().getCode();
         } catch (Exception ex) {
             log.warn("It wasnt possible to retrieve http status code");
         }
@@ -68,12 +73,17 @@ public class RetryHandlerConfiguration implements HttpRequestRetryHandler {
         return retry;
     }
 
-    private boolean isInList(HashSet<Class<?>> list, Throwable error) {
-        for (Class<?> aList : list) {
-            if (aList.isInstance(error)) {
-                return true;
-            }
-        }
+    @Override
+    public boolean retryRequest(HttpResponse httpResponse, int executionCount, HttpContext context) {
         return false;
+    }
+
+    @Override
+    public TimeValue getRetryInterval(HttpResponse httpResponse, int i, HttpContext httpContext) {
+        return null;
+    }
+
+    private boolean isInList(HashSet<Class<?>> list, Throwable error) {
+        return list.stream().anyMatch(aList -> aList.isInstance(error));
     }
 }

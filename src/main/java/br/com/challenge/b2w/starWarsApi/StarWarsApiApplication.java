@@ -9,9 +9,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.MessageSource;
@@ -31,6 +31,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+
+import static org.apache.hc.core5.util.Timeout.ofSeconds;
 
 /**
  * @author Leonardo Rocha
@@ -101,9 +103,10 @@ public class StarWarsApiApplication {
         final HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 
         final RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(1000)
-                .setConnectTimeout(5000)
-                .setSocketTimeout(1000).build();
+                .setConnectionRequestTimeout(ofSeconds(1000))
+                .setConnectionRequestTimeout(ofSeconds(5000))
+                .setResponseTimeout(ofSeconds(1000))
+                .build();
 
         final CloseableHttpClient httpClientBuilder = HttpClientBuilder.create()
                 .setDefaultRequestConfig(requestConfig)
