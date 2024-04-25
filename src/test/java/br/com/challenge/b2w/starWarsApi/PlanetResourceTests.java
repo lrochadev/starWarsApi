@@ -26,8 +26,8 @@ import static org.springframework.http.HttpMethod.DELETE;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PlanetResourceTests {
 
-    private static final String RESOURCE_PLANET_PATH = "/api/planets/";
-    private static final String RESOURCE_PLANET_PATH_WITH_ID = RESOURCE_PLANET_PATH + "{id}";
+    private static final String RESOURCE_PLANET_PATH = "/api/planets";
+    private static final String RESOURCE_PLANET_PATH_WITH_ID = RESOURCE_PLANET_PATH + "/{id}";
 
     @MockBean
     private PlanetRepository planetRepository;
