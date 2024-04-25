@@ -7,11 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -49,33 +47,33 @@ public class PlanetResourceTests {
         when(planetRepository.findAll()).thenReturn(planets);
 
         ResponseEntity<String> response = restTemplate.getForEntity(RESOURCE_PLANET_PATH, String.class);
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
     public void getPlanetByIdWhenIdAreCorrectShouldReturnStatusCode200() {
         ResponseEntity<Planet> response = restTemplate.getForEntity(RESOURCE_PLANET_PATH_WITH_ID, Planet.class, "1");
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
     public void getPlanetByIdWhenPlanetDoesNotExistShouldReturnStatusCode404() {
         ResponseEntity<Planet> response = restTemplate.getForEntity(RESOURCE_PLANET_PATH_WITH_ID, Planet.class, "-1");
-        assertThat(response.getStatusCodeValue()).isEqualTo(404);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
     public void deleteWhenIdExistsShouldReturnStatusCode200() {
         BDDMockito.doNothing().when(planetRepository).deleteById("1");
         ResponseEntity<String> exchange = restTemplate.exchange(RESOURCE_PLANET_PATH_WITH_ID, DELETE, null, String.class, "1");
-        assertThat(exchange.getStatusCodeValue()).isEqualTo(204);
+        assertThat(exchange.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     @Test
     public void createWhenNameIsNullShouldReturnStatusCode400BadRequest() {
         Planet planet = new Planet("3", null, "tropical", "mountains", 0);
         ResponseEntity<String> response = restTemplate.postForEntity(RESOURCE_PLANET_PATH, planet, String.class);
-        assertThat(response.getStatusCodeValue()).isEqualTo(400);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
@@ -83,14 +81,6 @@ public class PlanetResourceTests {
         Planet planet = new Planet("3", "Naboo", "tropical", "mountains", 0);
         when(planetRepository.save(planet)).thenReturn(planet);
         ResponseEntity<String> response = restTemplate.postForEntity(RESOURCE_PLANET_PATH, planet, String.class);
-        assertThat(response.getStatusCodeValue()).isEqualTo(201);
-    }
-
-    @TestConfiguration
-    static class Config {
-        @Bean
-        public RestTemplateBuilder restTemplateBuilder() {
-            return new RestTemplateBuilder();
-        }
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 }
