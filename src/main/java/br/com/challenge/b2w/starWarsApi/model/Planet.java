@@ -2,7 +2,6 @@ package br.com.challenge.b2w.starWarsApi.model;
 
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,6 @@ public class Planet {
     @Id
     private String id;
 
-    @NotNull
     @NotEmpty(message = "Name is mandatory")
     private String name;
 
