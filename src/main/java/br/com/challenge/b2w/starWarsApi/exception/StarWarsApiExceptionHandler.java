@@ -1,7 +1,9 @@
 package br.com.challenge.b2w.starWarsApi.exception;
 
 import br.com.challenge.b2w.starWarsApi.utils.MessageUtil;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -26,13 +28,10 @@ import static org.springframework.http.HttpStatus.*;
  * @author Leonardo Rocha
  */
 @RestControllerAdvice
-@RequiredArgsConstructor
-public class StarWarsApiExceptionHandler extends ResponseEntityExceptionHandler {
+public class StarWarsApiExceptionHandler {
 
-    private final MessageUtil message;
-
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, WebRequest request) {
 
         final List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
 
@@ -43,7 +42,7 @@ public class StarWarsApiExceptionHandler extends ResponseEntityExceptionHandler 
                 .builder()
                 .status(BAD_REQUEST.value())
                 .title("Ocorreu um erro!")
-                .detail(this.message.getMessage("error.message.invalid.argument"))
+                .detail("Parameters with invalid format were sent.")
                 .developerMessage(ex.getClass().getName())
                 .field(fields)
                 .timestamp(LocalDateTime.now().format(ofPattern("dd/MM/yyyy HH:mm:ss")))
@@ -52,7 +51,6 @@ public class StarWarsApiExceptionHandler extends ResponseEntityExceptionHandler 
 
         return new ResponseEntity<>(vedDetails, BAD_REQUEST);
     }
-
 
     @ExceptionHandler(PlanetNotFoundException.class)
     public final ResponseEntity<?> handlePlanetNotFoundException(PlanetNotFoundException ex) {
@@ -64,8 +62,7 @@ public class StarWarsApiExceptionHandler extends ResponseEntityExceptionHandler 
         return new ResponseEntity<>(getError(ex, INTERNAL_SERVER_ERROR), INTERNAL_SERVER_ERROR);
     }
 
-    @Override
-    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
         return new ResponseEntity<>(getError(ex, BAD_REQUEST), BAD_REQUEST);
     }
 
