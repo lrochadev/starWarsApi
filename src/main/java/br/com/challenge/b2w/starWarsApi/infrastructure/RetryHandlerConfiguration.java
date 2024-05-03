@@ -17,6 +17,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class RetryHandlerConfiguration implements HttpRequestRetryStrategy {
@@ -48,6 +49,7 @@ public class RetryHandlerConfiguration implements HttpRequestRetryStrategy {
         try {
 
             statusCode = HttpCoreContext.adapt(context).getResponse().getCode();
+
         } catch (Exception ex) {
             log.warn("It wasnt possible to retrieve http status code");
         }
@@ -62,25 +64,17 @@ public class RetryHandlerConfiguration implements HttpRequestRetryStrategy {
             retry = false;
         }
 
-        if (retry) {
-            try {
-                Thread.sleep(retrySleepTimeMS);
-            } catch (Exception ex) {
-                log.error("It wasnt possible to postpone the requet");
-            }
-        }
-
         return retry;
     }
 
     @Override
     public boolean retryRequest(HttpResponse httpResponse, int executionCount, HttpContext context) {
-        return false;
+        return executionCount <= this.maxRetries;
     }
 
     @Override
     public TimeValue getRetryInterval(HttpResponse httpResponse, int i, HttpContext httpContext) {
-        return null;
+        return TimeValue.of(retrySleepTimeMS, TimeUnit.MILLISECONDS);
     }
 
     private boolean isInList(HashSet<Class<?>> list, Throwable error) {
