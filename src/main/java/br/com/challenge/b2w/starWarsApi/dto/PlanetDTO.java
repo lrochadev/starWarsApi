@@ -2,8 +2,9 @@ package br.com.challenge.b2w.starWarsApi.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -12,7 +13,8 @@ import java.util.List;
 /**
  * @author Leonardo Rocha
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)

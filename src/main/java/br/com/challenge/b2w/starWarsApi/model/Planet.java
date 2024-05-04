@@ -3,8 +3,9 @@ package br.com.challenge.b2w.starWarsApi.model;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,7 +13,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 /**
  * @author Leonardo Rocha
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "planet")
