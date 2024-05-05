@@ -45,8 +45,8 @@ public class PlanetServiceImpl implements PlanetService {
     }
 
     @Override
-    public Optional<List<Planet>> findByName(final String nome) {
-        return planetRepository.findByNameIgnoreCaseContaining(nome);
+    public Optional<List<Planet>> findByName(final String name) {
+        return planetRepository.findByNameIgnoreCaseContaining(name);
     }
 
     @Override

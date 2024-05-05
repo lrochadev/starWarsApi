@@ -12,5 +12,5 @@ import java.util.Optional;
  */
 @Repository
 public interface PlanetRepository extends MongoRepository<Planet, String> {
-    Optional<List<Planet>> findByNameIgnoreCaseContaining(String nome);
+    Optional<List<Planet>> findByNameIgnoreCaseContaining(String name);
 }

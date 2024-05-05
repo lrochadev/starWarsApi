@@ -55,7 +55,8 @@ public class StarWarsApiExceptionHandler {
         return new ResponseEntity<>(getError(ex, INTERNAL_SERVER_ERROR), INTERNAL_SERVER_ERROR);
     }
 
-    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
         return new ResponseEntity<>(getError(ex, BAD_REQUEST), BAD_REQUEST);
     }
 

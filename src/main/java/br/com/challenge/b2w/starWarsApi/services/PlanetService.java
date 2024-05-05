@@ -18,5 +18,5 @@ public interface PlanetService {
 
     void delete(String id);
 
-    Optional<List<Planet>> findByName(String nome);
+    Optional<List<Planet>> findByName(String name);
 }

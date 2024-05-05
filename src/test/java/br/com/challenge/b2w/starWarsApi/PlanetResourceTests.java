@@ -2,13 +2,11 @@ package br.com.challenge.b2w.starWarsApi;
 
 import br.com.challenge.b2w.starWarsApi.exception.PlanetNotFoundException;
 import br.com.challenge.b2w.starWarsApi.model.Planet;
-import br.com.challenge.b2w.starWarsApi.repository.PlanetRepository;
 import br.com.challenge.b2w.starWarsApi.resources.PlanetResource;
 import br.com.challenge.b2w.starWarsApi.services.PlanetService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;

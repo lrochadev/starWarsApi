@@ -25,10 +25,10 @@ public class SwapiService {
 
     private static final Logger logger = LogManager.getLogger(SwapiService.class);
 
-    private final MessageUtil message;
-
     @Value("${starwars.api.url}")
     private String starWarsApiUrl;
+
+    private final MessageUtil message;
 
     private final RestTemplate restTemplate;
 

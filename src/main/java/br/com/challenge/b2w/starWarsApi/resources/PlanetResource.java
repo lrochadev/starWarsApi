@@ -53,7 +53,7 @@ public class PlanetResource {
 
     @GetMapping("/name/{name}")
     @Operation(summary = "${message.info.swagger.endpoint.planet.find.byname}")
-    public ResponseEntity<List<Planet>> findByNome(@PathVariable String name) {
+    public ResponseEntity<List<Planet>> findByName(@PathVariable String name) {
         return new ResponseEntity<>(planetService.findByName(name).orElse(emptyList()), OK);
     }
 }
