@@ -2,7 +2,7 @@ package br.com.challenge.b2w.starWarsApi.resources;
 
 import br.com.challenge.b2w.starWarsApi.model.Planet;
 import br.com.challenge.b2w.starWarsApi.services.PlanetService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
@@ -10,10 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static org.springframework.http.HttpStatus.OK;
@@ -30,33 +27,33 @@ public class PlanetResource {
     private final PlanetService planetService;
 
     @GetMapping
-    @ApiOperation(value = "${message.info.swagger.endpoint.planet.list}")
+    @Operation(summary = "${message.info.swagger.endpoint.planet.list}")
     public ResponseEntity<List<Planet>> list() {
         return new ResponseEntity<>(this.planetService.findAll(), OK);
     }
 
     @PostMapping
-    @ApiOperation(value = "${message.info.swagger.endpoint.planet.create}")
+    @Operation(summary = "${message.info.swagger.endpoint.planet.create}")
     public ResponseEntity<Planet> create(@Validated @RequestBody Planet planet) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.planetService.save(planet));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    @ApiOperation(value = "${message.info.swagger.endpoint.planet.delete}")
+    @Operation(summary = "${message.info.swagger.endpoint.planet.delete}")
     public void delete(@PathVariable String id) {
         this.planetService.delete(id);
     }
 
     @GetMapping("/{id}")
-    @ApiOperation(value = "${message.info.swagger.endpoint.planet.find.byid}")
+    @Operation(summary = "${message.info.swagger.endpoint.planet.find.byid}")
     public ResponseEntity<Planet> findById(@PathVariable String id) {
         return new ResponseEntity<>(planetService.findById(id), OK);
     }
 
     @GetMapping("/name/{name}")
-    @ApiOperation(value = "${message.info.swagger.endpoint.planet.find.byname}")
-    public ResponseEntity<List<Planet>> findByNome(@PathVariable String name) {
+    @Operation(summary = "${message.info.swagger.endpoint.planet.find.byname}")
+    public ResponseEntity<List<Planet>> findByName(@PathVariable String name) {
         return new ResponseEntity<>(planetService.findByName(name).orElse(emptyList()), OK);
     }
 }

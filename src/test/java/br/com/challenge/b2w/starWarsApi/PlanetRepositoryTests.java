@@ -5,12 +5,8 @@ import br.com.challenge.b2w.starWarsApi.repository.PlanetRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
@@ -22,12 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Leonardo Rocha
  */
-@DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
-@ExtendWith(SpringExtension.class)
-@TestPropertySource(properties = {
-        "restTemplate.pool.connectionRequestTimeout=1000"
-})
-public class PlanetRepositoryTests {
+@SpringBootTest
+public class PlanetRepositoryTests extends ContainerBase {
 
     @Autowired
     private PlanetRepository planetRepository;

@@ -45,14 +45,13 @@ public class PlanetServiceImpl implements PlanetService {
     }
 
     @Override
-    public Optional<List<Planet>> findByName(final String nome) {
-        return planetRepository.findByNameIgnoreCaseContaining(nome);
+    public Optional<List<Planet>> findByName(final String name) {
+        return planetRepository.findByNameIgnoreCaseContaining(name);
     }
 
     @Override
     public Planet findById(final String id) {
-        return planetRepository.findById(id)
-                .orElseThrow(() -> new PlanetNotFoundException(message.getMessage("error.message.planet.notfound")));
+        return planetRepository.findById(id).orElseThrow(() -> new PlanetNotFoundException(message.getMessage("error.message.planet.notfound")));
     }
 
     @Override

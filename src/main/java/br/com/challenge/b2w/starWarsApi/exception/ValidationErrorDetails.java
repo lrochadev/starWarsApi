@@ -1,15 +1,13 @@
 package br.com.challenge.b2w.starWarsApi.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 
 /**
  * @author Leonardo Rocha
  */
-@Data
-@SuperBuilder
+@Getter
+@Setter
+@Builder(builderMethodName = "validationBuilder")
 @AllArgsConstructor
 @NoArgsConstructor
 public class ValidationErrorDetails extends ErrorDetails {
