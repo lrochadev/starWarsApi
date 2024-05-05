@@ -1,6 +1,7 @@
 package br.com.challenge.b2w.starWarsApi.model;
 
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,5 +33,6 @@ public class Planet {
     @NotEmpty(message = "Terrain is mandatory")
     private String terrain;
 
+    @Hidden
     private int quantityOfApparitionInMovies = 0;
 }

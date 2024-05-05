@@ -51,8 +51,7 @@ public class PlanetServiceImpl implements PlanetService {
 
     @Override
     public Planet findById(final String id) {
-        return planetRepository.findById(id)
-                .orElseThrow(() -> new PlanetNotFoundException(message.getMessage("error.message.planet.notfound")));
+        return planetRepository.findById(id).orElseThrow(() -> new PlanetNotFoundException(message.getMessage("error.message.planet.notfound")));
     }
 
     @Override
