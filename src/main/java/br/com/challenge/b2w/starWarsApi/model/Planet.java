@@ -10,6 +10,9 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 
 /**
  * @author Leonardo Rocha
@@ -19,7 +22,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "planet")
-public class Planet {
+public class Planet implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 7229395964895089019L;
 
     @Id
     private String id;
