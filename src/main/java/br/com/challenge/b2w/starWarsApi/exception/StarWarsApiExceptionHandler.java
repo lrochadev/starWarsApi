@@ -46,17 +46,17 @@ public class StarWarsApiExceptionHandler {
     }
 
     @ExceptionHandler(PlanetNotFoundException.class)
-    public final ResponseEntity<?> handlePlanetNotFoundException(PlanetNotFoundException ex) {
+    public final ResponseEntity<ErrorDetails> handlePlanetNotFoundException(PlanetNotFoundException ex) {
         return new ResponseEntity<>(getError(ex, NOT_FOUND), NOT_FOUND);
     }
 
     @ExceptionHandler(SWAPIException.class)
-    public final ResponseEntity<?> handleSWAPIException(SWAPIException ex) {
+    public final ResponseEntity<ErrorDetails> handleSWAPIException(SWAPIException ex) {
         return new ResponseEntity<>(getError(ex, INTERNAL_SERVER_ERROR), INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+    public ResponseEntity<ErrorDetails> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
         return new ResponseEntity<>(getError(ex, BAD_REQUEST), BAD_REQUEST);
     }
 
