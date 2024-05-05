@@ -21,8 +21,8 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class RetryHandlerConfiguration implements HttpRequestRetryStrategy {
-    private final static HashSet<Class<?>> exceptionWhitelist = new HashSet<>();
-    private final static HashSet<Class<?>> exceptionBlacklist = new HashSet<>();
+    private static final HashSet<Class<?>> exceptionWhitelist = new HashSet<>();
+    private static final HashSet<Class<?>> exceptionBlacklist = new HashSet<>();
 
     static {
         exceptionWhitelist.add(NoHttpResponseException.class);
