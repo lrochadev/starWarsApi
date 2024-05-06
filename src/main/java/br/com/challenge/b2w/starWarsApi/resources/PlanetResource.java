@@ -1,6 +1,6 @@
 package br.com.challenge.b2w.starWarsApi.resources;
 
-import br.com.challenge.b2w.starWarsApi.model.Planet;
+import br.com.challenge.b2w.starWarsApi.dto.PlanetDto;
 import br.com.challenge.b2w.starWarsApi.services.PlanetService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -28,13 +28,13 @@ public class PlanetResource {
 
     @GetMapping
     @Operation(summary = "${message.info.swagger.endpoint.planet.list}")
-    public ResponseEntity<List<Planet>> list() {
+    public ResponseEntity<List<PlanetDto>> list() {
         return new ResponseEntity<>(this.planetService.findAll(), OK);
     }
 
     @PostMapping
     @Operation(summary = "${message.info.swagger.endpoint.planet.create}")
-    public ResponseEntity<Planet> create(@Validated @RequestBody Planet planet) {
+    public ResponseEntity<PlanetDto> create(@Validated @RequestBody PlanetDto planet) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.planetService.save(planet));
     }
 
@@ -47,13 +47,13 @@ public class PlanetResource {
 
     @GetMapping("/{id}")
     @Operation(summary = "${message.info.swagger.endpoint.planet.find.byid}")
-    public ResponseEntity<Planet> findById(@PathVariable String id) {
+    public ResponseEntity<PlanetDto> findById(@PathVariable String id) {
         return new ResponseEntity<>(planetService.findById(id), OK);
     }
 
     @GetMapping("/name/{name}")
     @Operation(summary = "${message.info.swagger.endpoint.planet.find.byname}")
-    public ResponseEntity<List<Planet>> findByName(@PathVariable String name) {
+    public ResponseEntity<List<PlanetDto>> findByName(@PathVariable String name) {
         return new ResponseEntity<>(planetService.findByName(name).orElse(emptyList()), OK);
     }
 }

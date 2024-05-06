@@ -1,4 +1,4 @@
-package br.com.challenge.b2w.starWarsApi.dto;
+package br.com.challenge.b2w.starWarsApi.dto.swapi;
 
 /**
  * @author Leonardo Rocha
@@ -12,16 +12,16 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PropertiesDTO implements Serializable {
+public class SwapiDto implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = 3390391804728401959L;
-    private PlanetDTO properties;
-    private String description;
+    private static final long serialVersionUID = -155600128691525363L;
+    private List<PropertiesDto> results;
 }

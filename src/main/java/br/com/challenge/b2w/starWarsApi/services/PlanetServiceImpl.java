@@ -1,7 +1,9 @@
 package br.com.challenge.b2w.starWarsApi.services;
 
-import br.com.challenge.b2w.starWarsApi.dto.SwapiDTO;
+import br.com.challenge.b2w.starWarsApi.dto.PlanetDto;
+import br.com.challenge.b2w.starWarsApi.dto.swapi.SwapiDto;
 import br.com.challenge.b2w.starWarsApi.exception.PlanetNotFoundException;
+import br.com.challenge.b2w.starWarsApi.mappers.PlanetMapper;
 import br.com.challenge.b2w.starWarsApi.model.Planet;
 import br.com.challenge.b2w.starWarsApi.repository.PlanetRepository;
 import br.com.challenge.b2w.starWarsApi.utils.MessageUtil;
@@ -20,21 +22,23 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 public class PlanetServiceImpl implements PlanetService {
 
+    private static final PlanetMapper INSTANCE = PlanetMapper.INSTANCE;
     private final MessageUtil message;
     private final SwapiService swapiService;
     private final PlanetRepository planetRepository;
 
     @Override
-    public Planet save(final Planet planet) {
+    public PlanetDto save(final PlanetDto planetDto) {
 
-        final SwapiDTO responseSwapi = this.swapiService.consultSwAPI(planet.getName());
+        final SwapiDto responseSwapi = this.swapiService.consultSwAPI(planetDto.getName());
 
         if (nonNull(responseSwapi)) {
-            responseSwapi.setResult(null);
-            planet.setQuantityOfApparitionInMovies(this.swapiService.getQuantityOfApparitionInMovies(planet.getName(), responseSwapi));
+            planetDto.setQuantityOfApparitionInMovies(this.swapiService.getQuantityOfApparitionInMovies(planetDto.getName(), responseSwapi));
         }
 
-        return planetRepository.save(planet);
+        final Planet saved = planetRepository.save(INSTANCE.toDomain(planetDto));
+
+        return INSTANCE.toDto(saved);
     }
 
     @Override
@@ -45,18 +49,19 @@ public class PlanetServiceImpl implements PlanetService {
     }
 
     @Override
-    public Optional<List<Planet>> findByName(final String name) {
-        return planetRepository.findByNameIgnoreCaseContaining(name);
+    public Optional<List<PlanetDto>> findByName(final String name) {
+        return planetRepository.findByNameIgnoreCaseContaining(name).map(INSTANCE::mapToListDto);
     }
 
     @Override
-    public Planet findById(final String id) {
-        return planetRepository.findById(id).orElseThrow(() -> new PlanetNotFoundException(message.getMessage("error.message.planet.notfound")));
+    public PlanetDto findById(final String id) {
+        final Planet planet = planetRepository.findById(id).orElseThrow(() -> new PlanetNotFoundException(message.getMessage("error.message.planet.notfound")));
+        return INSTANCE.toDto(planet);
     }
 
     @Override
-    public List<Planet> findAll() {
-        return planetRepository.findAll();
+    public List<PlanetDto> findAll() {
+        return INSTANCE.mapToListDto(planetRepository.findAll());
     }
 
 }
