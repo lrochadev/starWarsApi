@@ -58,7 +58,7 @@ public class SwapiService {
     public Integer getQuantityOfApparitionInMovies(final String planetName, final SwapiDto returnOfSwapi) {
         return ofNullable(returnOfSwapi.getResults()).orElse(new ArrayList<>())
                 .stream()
-                .filter(propertiesDTO -> planetName.equalsIgnoreCase(propertiesDTO.getName()))
+                .filter(propertiesDto -> planetName.equalsIgnoreCase(propertiesDto.getName()))
                 .findFirst()
                 .map(PropertiesDto::getFilms)
                 .map(List::size)
