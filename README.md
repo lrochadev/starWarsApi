@@ -12,8 +12,9 @@ Com o build realizado, executar o comando abaixo para criar os containers da API
 
 - docker-compose up
 
-A partir de agora você poderá acessar os serviços pelos endpoints presentes no Swagger.
+A partir de agora você poderá acessar os serviços pelos endpoints presentes no Swagger. 
 
 ## Link de acesso ao Swagger: http://localhost:8080/swagger-ui/index.html
 
 ![Cat](https://i.imgur.com/6Ccwex0.png)
+
