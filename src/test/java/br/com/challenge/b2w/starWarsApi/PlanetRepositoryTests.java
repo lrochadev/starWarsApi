@@ -2,6 +2,7 @@ package br.com.challenge.b2w.starWarsApi;
 
 import br.com.challenge.b2w.starWarsApi.model.Planet;
 import br.com.challenge.b2w.starWarsApi.repository.PlanetRepository;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Leonardo Rocha
  */
 @SpringBootTest
-public class PlanetRepositoryTests extends ContainerBase {
+class PlanetRepositoryTests extends ContainerBase {
 
     @Autowired
     private PlanetRepository planetRepository;
@@ -35,7 +36,7 @@ public class PlanetRepositoryTests extends ContainerBase {
     }
 
     @Test
-    public void createShouldPersistData() {
+    void createShouldPersistData() {
         Planet planet = new Planet(null, "Alderaan", "temperate", "mountains", 1);
         planet = this.planetRepository.save(planet);
 
@@ -47,7 +48,7 @@ public class PlanetRepositoryTests extends ContainerBase {
     }
 
     @Test
-    public void deleteShouldRemoveData() {
+    void deleteShouldRemoveData() {
         Planet planet = new Planet(null, "Tatooine", "temperate", "mountains", 0);
         planet = this.planetRepository.save(planet);
 
@@ -57,7 +58,7 @@ public class PlanetRepositoryTests extends ContainerBase {
     }
 
     @Test
-    public void updateShouldChangeAndPersistData() {
+    void updateShouldChangeAndPersistData() {
         Planet planet = new Planet(null, "Naboo", "tropical", "mountains", 1);
         planet = this.planetRepository.save(planet);
 
@@ -71,18 +72,19 @@ public class PlanetRepositoryTests extends ContainerBase {
     }
 
     @Test
-    public void findByNameIgnoreCaseContainingShouldIgnoreCase() {
+    void findByNameIgnoreCaseContainingShouldIgnoreCase() {
 
         this.planetRepository.saveAll(asList(
                 new Planet(null, "Alderaan", "temperate", "mountains", 0),
                 new Planet(null, "alderaan", "tropical", "mountains", 0)
         ));
 
-        planetRepository.findByNameIgnoreCaseContaining("alderaan").ifPresent(planets -> assertThat(planets.size()).isEqualTo(2));
+        planetRepository.findByNameIgnoreCaseContaining("alderaan").ifPresent(planets -> assertThat(planets).hasSize(2));
+
     }
 
     @Test
-    public void createWhenNameIsNullShouldThrowIllegalArgumentException() {
+    void createWhenNameIsNullShouldThrowIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> this.planetRepository.save(null));
     }
 

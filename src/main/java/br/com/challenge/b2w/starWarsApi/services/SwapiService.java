@@ -1,6 +1,7 @@
 package br.com.challenge.b2w.starWarsApi.services;
 
-import br.com.challenge.b2w.starWarsApi.dto.SwapiDTO;
+import br.com.challenge.b2w.starWarsApi.dto.swapi.PropertiesDto;
+import br.com.challenge.b2w.starWarsApi.dto.swapi.SwapiDto;
 import br.com.challenge.b2w.starWarsApi.exception.SWAPIException;
 import br.com.challenge.b2w.starWarsApi.utils.MessageUtil;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static java.util.Optional.ofNullable;
 
@@ -32,13 +34,13 @@ public class SwapiService {
 
     private final RestTemplate restTemplate;
 
-    public SwapiDTO consultSwAPI(final String planetName) {
+    public SwapiDto consultSwAPI(final String planetName) {
 
         logger.info("Finding planet : {}, in SWAPI.", planetName);
 
         try {
 
-            final ResponseEntity<SwapiDTO> response = restTemplate.getForEntity(this.starWarsApiUrl + planetName, SwapiDTO.class);
+            final ResponseEntity<SwapiDto> response = restTemplate.getForEntity(this.starWarsApiUrl + planetName, SwapiDto.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 logger.info("Found: {} planet!", planetName);
@@ -53,7 +55,13 @@ public class SwapiService {
         return null;
     }
 
-    public Integer getQuantityOfApparitionInMovies(final String planetName, final SwapiDTO returnOfSwapi) {
-        return ofNullable(returnOfSwapi.getResult()).orElse(new ArrayList<>()).stream().filter(propertiesDTO -> planetName.equalsIgnoreCase(propertiesDTO.getProperties().getName())).findFirst().map(propertiesDTO -> Integer.valueOf(propertiesDTO.getProperties().getRotation_period())).orElse(1);
+    public Integer getQuantityOfApparitionInMovies(final String planetName, final SwapiDto returnOfSwapi) {
+        return ofNullable(returnOfSwapi.getResults()).orElse(new ArrayList<>())
+                .stream()
+                .filter(propertiesDto -> planetName.equalsIgnoreCase(propertiesDto.getName()))
+                .findFirst()
+                .map(PropertiesDto::getFilms)
+                .map(List::size)
+                .orElse(0);
     }
 }

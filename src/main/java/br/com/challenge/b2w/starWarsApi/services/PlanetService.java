@@ -1,6 +1,6 @@
 package br.com.challenge.b2w.starWarsApi.services;
 
-import br.com.challenge.b2w.starWarsApi.model.Planet;
+import br.com.challenge.b2w.starWarsApi.dto.PlanetDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,13 +10,13 @@ import java.util.Optional;
  */
 public interface PlanetService {
 
-    List<Planet> findAll();
+    List<PlanetDto> findAll();
 
-    Planet findById(String id);
+    PlanetDto findById(String id);
 
-    Planet save(Planet planet);
+    PlanetDto save(PlanetDto planet);
 
     void delete(String id);
 
-    Optional<List<Planet>> findByName(String name);
+    Optional<List<PlanetDto>> findByName(String name);
 }

@@ -1,5 +1,6 @@
 package br.com.challenge.b2w.starWarsApi;
 
+import br.com.challenge.b2w.starWarsApi.dto.PlanetDto;
 import br.com.challenge.b2w.starWarsApi.exception.PlanetNotFoundException;
 import br.com.challenge.b2w.starWarsApi.model.Planet;
 import br.com.challenge.b2w.starWarsApi.resources.PlanetResource;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Leonardo Rocha
  */
 @ExtendWith(MockitoExtension.class)
-public class PlanetResourceTests extends ControllerTest {
+class PlanetResourceTests extends ControllerTest {
 
     private static final String RESOURCE_PLANET_PATH = "/api/planets/";
     private static final String RESOURCE_PLANET_PATH_WITH_ID = RESOURCE_PLANET_PATH + "/{id}";
@@ -42,11 +43,11 @@ public class PlanetResourceTests extends ControllerTest {
     }
 
     @Test
-    public void listPlanetsShouldReturnStatusCode200() {
+    void listPlanetsShouldReturnStatusCode200() {
         doMvc(mockMvc -> {
             try {
 
-                List<Planet> planets = List.of(new Planet("66297ba166cb2e6e5ca020b7", "Endor", "tropical", "mountains", 0));
+                List<PlanetDto> planets = List.of(new PlanetDto("66297ba166cb2e6e5ca020b7", "Endor", "tropical", "mountains", 0));
                 when(planetService.findAll()).thenReturn(planets);
 
                 mockMvc.perform(get(RESOURCE_PLANET_PATH)
@@ -69,12 +70,12 @@ public class PlanetResourceTests extends ControllerTest {
     }
 
     @Test
-    public void getPlanetByIdWhenIdAreCorrectShouldReturnStatusCode200() {
+    void getPlanetByIdWhenIdAreCorrectShouldReturnStatusCode200() {
         doMvc(mockMvc -> {
             try {
 
                 final String id = "66297ba166cb2e6e5ca020b7";
-                final Planet planet = new Planet(id, "Endor", "tropical", "mountains", 0);
+                final PlanetDto planet = new PlanetDto(id, "Endor", "tropical", "mountains", 0);
                 when(planetService.findById(anyString())).thenReturn(planet);
 
                 mockMvc.perform(get(RESOURCE_PLANET_PATH_WITH_ID, id)
@@ -96,7 +97,7 @@ public class PlanetResourceTests extends ControllerTest {
     }
 
     @Test
-    public void getPlanetByIdWhenPlanetDoesNotExistShouldReturnStatusCode404() {
+    void getPlanetByIdWhenPlanetDoesNotExistShouldReturnStatusCode404() {
         doMvc(mockMvc -> {
             try {
 
@@ -120,13 +121,13 @@ public class PlanetResourceTests extends ControllerTest {
     }
 
     @Test
-    public void deleteWhenIdExistsShouldReturnStatusCode200() {
+    void deleteWhenIdExistsShouldReturnStatusCode200() {
         doMvc(mockMvc -> {
             try {
 
                 final String id = "66297ba166cb2e6e5ca020b7";
                 doNothing().when(planetService).delete(anyString());
-                lenient().when(planetService.findById((id))).thenReturn(any(Planet.class));
+                lenient().when(planetService.findById((id))).thenReturn(any(PlanetDto.class));
 
                 mockMvc.perform(delete(RESOURCE_PLANET_PATH_WITH_ID, id).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
 
@@ -139,11 +140,11 @@ public class PlanetResourceTests extends ControllerTest {
     }
 
     @Test
-    public void createWhenNameIsNullShouldReturnStatusCode400BadRequest() {
+    void createWhenNameIsNullShouldReturnStatusCode400BadRequest() {
         doMvc(mockMvc -> {
             try {
 
-                final Planet planet = new Planet("66297ba166cb2e6e5ca020b7", null, "tropical", "mountains", 0);
+                final PlanetDto planet = new PlanetDto("66297ba166cb2e6e5ca020b7", null, "tropical", "mountains", 0);
 
                 mockMvc.perform(post(RESOURCE_PLANET_PATH)
                                 .content(jsonMapper.writeValueAsString(planet))
@@ -165,12 +166,12 @@ public class PlanetResourceTests extends ControllerTest {
     }
 
     @Test
-    public void createShouldPersistDataAndReturnStatusCode201() {
+    void createShouldPersistDataAndReturnStatusCode201() {
         doMvc(mockMvc -> {
             try {
 
                 final String id = "66297ba166cb2e6e5ca020b7";
-                final Planet planet = new Planet(id, "Naboo", "tropical", "mountains", 0);
+                final PlanetDto planet = new PlanetDto(id, "Naboo", "tropical", "mountains", 0);
 
                 when(planetService.save(planet)).thenReturn(planet);
 

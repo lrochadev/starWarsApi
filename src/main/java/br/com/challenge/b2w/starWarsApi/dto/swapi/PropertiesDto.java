@@ -1,6 +1,11 @@
-package br.com.challenge.b2w.starWarsApi.dto;
+package br.com.challenge.b2w.starWarsApi.dto.swapi;
+
+/**
+ * @author Leonardo Rocha
+ */
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,30 +16,30 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author Leonardo Rocha
- */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PlanetDTO implements Serializable {
+public class PropertiesDto implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = -3836805433196896673L;
+    private static final long serialVersionUID = 3390391804728401959L;
     private String name;
-    private String url;
-    private String rotation_period;
-    private String orbital_period;
+    @JsonProperty("rotation_period")
+    private String rotationPeriod;
+    @JsonProperty("orbital_period")
+    private String orbitalPeriod;
     private String diameter;
     private String climate;
     private String gravity;
     private String terrain;
-    private String surface_water;
+    @JsonProperty("surface_water")
+    private String surfaceWater;
     private String population;
+    private List<String> residents;
+    private List<String> films = new LinkedList<>();
     private String created;
     private String edited;
-    private List<String> films = new LinkedList<>();
-    private List<String> residents;
+    private String url;
 }
