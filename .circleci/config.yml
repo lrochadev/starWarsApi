@@ -5,6 +5,7 @@ executors:
   machine_executor_amd64:
     machine:
       image: ubuntu-2204:current
+      docker_layer_caching: true
     environment:
       architecture: "amd64"
       platform: "linux/amd64"
