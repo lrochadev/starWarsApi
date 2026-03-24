@@ -24,14 +24,11 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
@@ -80,26 +77,15 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    public RestTemplate restTemplate(final RetryMessageProperties properties) {
-        final RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory(properties));
-        restTemplate.setMessageConverters(messageConverters());
-        return restTemplate;
-    }
-
-    @Bean
-    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
-        return new MappingJackson2HttpMessageConverter(jsonMapper());
-    }
-
-    private List<HttpMessageConverter<?>> messageConverters() {
-        final List<HttpMessageConverter<?>> messageConverters = new LinkedList<>();
-        messageConverters.add(mappingJackson2HttpMessageConverter());
-        messageConverters.add(stringHttpMessageConverter());
-        return messageConverters;
-    }
-
-    private StringHttpMessageConverter stringHttpMessageConverter() {
-        return new StringHttpMessageConverter(StandardCharsets.UTF_8);
+    public RestClient restClient(final RetryMessageProperties properties) {
+        return RestClient.builder()
+                .requestFactory(clientHttpRequestFactory(properties))
+                .messageConverters(converters -> {
+                    converters.clear();
+                    converters.add(new MappingJackson2HttpMessageConverter(jsonMapper()));
+                    converters.add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
+                })
+                .build();
     }
 
     private ClientHttpRequestFactory clientHttpRequestFactory(final RetryMessageProperties properties) {
@@ -116,13 +102,13 @@ public class ApplicationConfiguration {
         poolingHttpClientConnectionManager.setDefaultMaxPerRoute(properties.getMaxPerRoute());
         poolingHttpClientConnectionManager.setValidateAfterInactivity(TimeValue.ofSeconds(properties.getValidateAfterInactivity()));
 
-        final CloseableHttpClient httpClientBuilder = HttpClientBuilder.create()
+        final CloseableHttpClient httpClient = HttpClientBuilder.create()
                 .setConnectionManager(poolingHttpClientConnectionManager)
                 .setRetryStrategy(new RetryHandlerConfiguration(properties.getRetryCount(), properties.getRetrySleepTimeMS()))
                 .setDefaultRequestConfig(requestConfig)
                 .build();
 
-        requestFactory.setHttpClient(httpClientBuilder);
+        requestFactory.setHttpClient(httpClient);
 
         return new BufferingClientHttpRequestFactory(requestFactory);
     }
