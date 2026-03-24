@@ -1,7 +1,7 @@
-FROM openjdk:11
+FROM eclipse-temurin:21-jre-alpine
 
 EXPOSE 8080
 
-ADD target/starWarsAPI.jar starWarsAPI.jar
+COPY target/starWarsAPI.jar starWarsAPI.jar
 
-ENTRYPOINT ["java","-Dspring.data.mongodb.uri=mongodb://mongodb/starwars_db","-jar","/starWarsAPI.jar"]
+ENTRYPOINT ["java", "-jar", "/starWarsAPI.jar", "--spring.mongodb.uri=mongodb://mongodb/starwars_db"]

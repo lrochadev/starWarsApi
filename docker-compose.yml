@@ -1,14 +1,13 @@
-version: '3'
 services:
   mongodb:
     container_name: starwars-mongodb
-    image: mongo:4.2
+    image: mongo:8.0
     environment:
       - MONGO_DATA_DIR=/data/db
     volumes:
       - ./data/db:/data/db
     ports:
-      - 27017:27017
+      - "27017:27017"
     networks:
       - production-network
 
@@ -21,8 +20,7 @@ services:
     networks:
       - production-network
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: starwars
+      SPRING_MONGODB_URI: mongodb://mongodb/starwars_db
     depends_on:
       - mongodb
 

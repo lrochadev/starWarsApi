@@ -7,10 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 21 from Amazon Coretto
+    - name: Set up JDK 21 from Amazon Corretto
       uses: actions/setup-java@v4
       with:
         distribution: 'corretto'
         java-version: '21'
+        cache: 'maven'
     - name: Build with Maven
       run: mvn -B package --file pom.xml
