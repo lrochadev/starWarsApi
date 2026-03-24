@@ -43,9 +43,10 @@ public class PlanetServiceImpl implements PlanetService {
 
     @Override
     public void delete(String id) {
-        if (nonNull(findById(id))) {
-            this.planetRepository.deleteById(id);
+        if (!planetRepository.existsById(id)) {
+            throw new PlanetNotFoundException(message.getMessage("error.message.planet.notfound"));
         }
+        planetRepository.deleteById(id);
     }
 
     @Override
