@@ -14,6 +14,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.ExceptionHandlerMethodResolver;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
@@ -42,7 +43,7 @@ public abstract class ControllerTest {
 
         exceptionHandlerExceptionResolver = new ExceptionHandlerExceptionResolver() {
             @Override
-            protected ServletInvocableHandlerMethod getExceptionHandlerMethod(HandlerMethod handlerMethod, Exception exception) {
+            protected ServletInvocableHandlerMethod getExceptionHandlerMethod(HandlerMethod handlerMethod, Exception exception, ServletWebRequest webRequest) {
                 final Method method = new ExceptionHandlerMethodResolver(StarWarsApiExceptionHandler.class).resolveMethod(exception);
                 return new ServletInvocableHandlerMethod(new StarWarsApiExceptionHandler(), method);
             }
