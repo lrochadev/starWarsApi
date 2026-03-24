@@ -7,7 +7,9 @@ import br.com.challenge.b2w.starWarsApi.mappers.PlanetMapper;
 import br.com.challenge.b2w.starWarsApi.model.Planet;
 import br.com.challenge.b2w.starWarsApi.repository.PlanetRepository;
 import br.com.challenge.b2w.starWarsApi.utils.MessageUtil;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.Optional;
 /**
  * @author Leonardo Rocha
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PlanetServiceImpl implements PlanetService {
@@ -59,9 +62,14 @@ public class PlanetServiceImpl implements PlanetService {
 
     private PlanetDto enrichAndSaveIfNeeded(final Planet planet) {
         if (planet.getQuantityOfApparitionInMovies() == null) {
-            final SwapiDto swapiDto = swapiService.consultSwAPI(planet.getName());
-            planet.setQuantityOfApparitionInMovies(swapiService.getQuantityOfApparitionInMovies(planet.getName(), swapiDto));
-            planetRepository.save(planet);
+            try {
+                final SwapiDto swapiDto = swapiService.consultSwAPI(planet.getName());
+                planet.setQuantityOfApparitionInMovies(swapiService.getQuantityOfApparitionInMovies(planet.getName(), swapiDto));
+                planetRepository.save(planet);
+            } catch (CallNotPermittedException e) {
+                log.warn("SWAPI circuit breaker is OPEN for planet '{}', returning count=0 as fallback", planet.getName());
+                planet.setQuantityOfApparitionInMovies(0);
+            }
         }
         return planetMapper.toDto(planet);
     }

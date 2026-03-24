@@ -2,6 +2,9 @@ package br.com.challenge.b2w.starWarsApi.configuration;
 
 import br.com.challenge.b2w.starWarsApi.infrastructure.RetryHandlerConfiguration;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
@@ -29,6 +32,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestClient;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Properties;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
@@ -38,6 +42,18 @@ import static org.apache.hc.core5.util.Timeout.ofMilliseconds;
 @Configuration
 @EnableConfigurationProperties(RetryMessageProperties.class)
 public class ApplicationConfiguration {
+
+    @Bean
+    public CircuitBreaker swapiCircuitBreaker() {
+        CircuitBreakerConfig config = CircuitBreakerConfig.custom()
+                .failureRateThreshold(50)
+                .waitDurationInOpenState(Duration.ofSeconds(30))
+                .slidingWindowSize(10)
+                .minimumNumberOfCalls(5)
+                .permittedNumberOfCallsInHalfOpenState(3)
+                .build();
+        return CircuitBreakerRegistry.of(config).circuitBreaker("swapi");
+    }
 
     @Bean
     public MessageSource messageSource() {
