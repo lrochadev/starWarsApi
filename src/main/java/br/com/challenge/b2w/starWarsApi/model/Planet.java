@@ -40,5 +40,5 @@ public class Planet implements Serializable {
     private String terrain;
 
     @Hidden
-    private int quantityOfApparitionInMovies = 0;
+    private Integer quantityOfApparitionInMovies;
 }

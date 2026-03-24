@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Objects.nonNull;
-
 /**
  * @author Leonardo Rocha
  */
@@ -29,15 +27,7 @@ public class PlanetServiceImpl implements PlanetService {
 
     @Override
     public PlanetDto save(final PlanetDto planetDto) {
-
-        final SwapiDto responseSwapi = this.swapiService.consultSwAPI(planetDto.getName());
-
-        if (nonNull(responseSwapi)) {
-            planetDto.setQuantityOfApparitionInMovies(this.swapiService.getQuantityOfApparitionInMovies(planetDto.getName(), responseSwapi));
-        }
-
         final Planet saved = planetRepository.save(planetMapper.toDomain(planetDto));
-
         return planetMapper.toDto(saved);
     }
 
@@ -51,18 +41,29 @@ public class PlanetServiceImpl implements PlanetService {
 
     @Override
     public Optional<List<PlanetDto>> findByName(final String name) {
-        return planetRepository.findByNameIgnoreCaseContaining(name).map(planetMapper::mapToListDto);
+        return planetRepository.findByNameIgnoreCaseContaining(name)
+                .map(planets -> planets.stream().map(this::enrichAndSaveIfNeeded).toList());
     }
 
     @Override
     public PlanetDto findById(final String id) {
-        final Planet planet = planetRepository.findById(id).orElseThrow(() -> new PlanetNotFoundException(message.getMessage("error.message.planet.notfound")));
-        return planetMapper.toDto(planet);
+        final Planet planet = planetRepository.findById(id)
+                .orElseThrow(() -> new PlanetNotFoundException(message.getMessage("error.message.planet.notfound")));
+        return enrichAndSaveIfNeeded(planet);
     }
 
     @Override
     public List<PlanetDto> findAll() {
-        return planetMapper.mapToListDto(planetRepository.findAll());
+        return planetRepository.findAll().stream().map(this::enrichAndSaveIfNeeded).toList();
+    }
+
+    private PlanetDto enrichAndSaveIfNeeded(final Planet planet) {
+        if (planet.getQuantityOfApparitionInMovies() == null) {
+            final SwapiDto swapiDto = swapiService.consultSwAPI(planet.getName());
+            planet.setQuantityOfApparitionInMovies(swapiService.getQuantityOfApparitionInMovies(planet.getName(), swapiDto));
+            planetRepository.save(planet);
+        }
+        return planetMapper.toDto(planet);
     }
 
 }
