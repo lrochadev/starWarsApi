@@ -22,7 +22,7 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 public class PlanetServiceImpl implements PlanetService {
 
-    private static final PlanetMapper INSTANCE = PlanetMapper.INSTANCE;
+    private final PlanetMapper planetMapper;
     private final MessageUtil message;
     private final SwapiService swapiService;
     private final PlanetRepository planetRepository;
@@ -36,9 +36,9 @@ public class PlanetServiceImpl implements PlanetService {
             planetDto.setQuantityOfApparitionInMovies(this.swapiService.getQuantityOfApparitionInMovies(planetDto.getName(), responseSwapi));
         }
 
-        final Planet saved = planetRepository.save(INSTANCE.toDomain(planetDto));
+        final Planet saved = planetRepository.save(planetMapper.toDomain(planetDto));
 
-        return INSTANCE.toDto(saved);
+        return planetMapper.toDto(saved);
     }
 
     @Override
@@ -50,18 +50,18 @@ public class PlanetServiceImpl implements PlanetService {
 
     @Override
     public Optional<List<PlanetDto>> findByName(final String name) {
-        return planetRepository.findByNameIgnoreCaseContaining(name).map(INSTANCE::mapToListDto);
+        return planetRepository.findByNameIgnoreCaseContaining(name).map(planetMapper::mapToListDto);
     }
 
     @Override
     public PlanetDto findById(final String id) {
         final Planet planet = planetRepository.findById(id).orElseThrow(() -> new PlanetNotFoundException(message.getMessage("error.message.planet.notfound")));
-        return INSTANCE.toDto(planet);
+        return planetMapper.toDto(planet);
     }
 
     @Override
     public List<PlanetDto> findAll() {
-        return INSTANCE.mapToListDto(planetRepository.findAll());
+        return planetMapper.mapToListDto(planetRepository.findAll());
     }
 
 }
