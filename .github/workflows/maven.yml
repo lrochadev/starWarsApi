@@ -14,4 +14,10 @@ jobs:
         java-version: '21'
         cache: 'maven'
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package --fail-at-end --file pom.xml
+    - name: Publish test report
+      uses: mikepenz/action-junit-report@v5
+      if: always()
+      with:
+        report_paths: '**/target/surefire-reports/TEST-*.xml'
+        fail_on_failure: true
