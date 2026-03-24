@@ -10,6 +10,8 @@ import br.com.challenge.b2w.starWarsApi.utils.MessageUtil;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -56,8 +58,8 @@ public class PlanetServiceImpl implements PlanetService {
     }
 
     @Override
-    public List<PlanetDto> findAll() {
-        return planetRepository.findAll().stream().map(this::enrichAndSaveIfNeeded).toList();
+    public Page<PlanetDto> findAll(final Pageable pageable) {
+        return planetRepository.findAll(pageable).map(this::enrichAndSaveIfNeeded);
     }
 
     private PlanetDto enrichAndSaveIfNeeded(final Planet planet) {

@@ -5,6 +5,9 @@ import br.com.challenge.b2w.starWarsApi.services.PlanetService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,8 +31,8 @@ public class PlanetResource {
 
     @GetMapping
     @Operation(summary = "${message.info.swagger.endpoint.planet.list}")
-    public ResponseEntity<List<PlanetDto>> list() {
-        return new ResponseEntity<>(this.planetService.findAll(), OK);
+    public ResponseEntity<Page<PlanetDto>> list(@PageableDefault(size = 20) Pageable pageable) {
+        return new ResponseEntity<>(this.planetService.findAll(pageable), OK);
     }
 
     @PostMapping

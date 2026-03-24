@@ -1,6 +1,8 @@
 package br.com.challenge.b2w.starWarsApi.services;
 
 import br.com.challenge.b2w.starWarsApi.dto.PlanetDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +12,7 @@ import java.util.Optional;
  */
 public interface PlanetService {
 
-    List<PlanetDto> findAll();
+    Page<PlanetDto> findAll(Pageable pageable);
 
     PlanetDto findById(String id);
 

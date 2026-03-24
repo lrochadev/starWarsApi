@@ -2,7 +2,6 @@ package br.com.challenge.b2w.starWarsApi;
 
 import br.com.challenge.b2w.starWarsApi.dto.PlanetDto;
 import br.com.challenge.b2w.starWarsApi.exception.PlanetNotFoundException;
-import br.com.challenge.b2w.starWarsApi.model.Planet;
 import br.com.challenge.b2w.starWarsApi.resources.PlanetResource;
 import br.com.challenge.b2w.starWarsApi.services.PlanetService;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -51,20 +52,20 @@ class PlanetResourceTests extends ControllerTest {
             try {
 
                 List<PlanetDto> planets = List.of(new PlanetDto("66297ba166cb2e6e5ca020b7", "Endor", "tropical", "mountains", 0));
-                when(planetService.findAll()).thenReturn(planets);
+                when(planetService.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(planets));
 
                 mockMvc.perform(get(RESOURCE_PLANET_PATH)
                                 .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                        .andExpect(jsonPath("$", hasSize(1)))
-                        .andExpect(jsonPath("$[0].id", is("66297ba166cb2e6e5ca020b7")))
-                        .andExpect(jsonPath("$[0].name", is("Endor")))
-                        .andExpect(jsonPath("$[0].climate", is("tropical")))
-                        .andExpect(jsonPath("$[0].terrain", is("mountains")))
-                        .andExpect(jsonPath("$[0].quantityOfApparitionInMovies", is(0)));
+                        .andExpect(jsonPath("$.content", hasSize(1)))
+                        .andExpect(jsonPath("$.content[0].id", is("66297ba166cb2e6e5ca020b7")))
+                        .andExpect(jsonPath("$.content[0].name", is("Endor")))
+                        .andExpect(jsonPath("$.content[0].climate", is("tropical")))
+                        .andExpect(jsonPath("$.content[0].terrain", is("mountains")))
+                        .andExpect(jsonPath("$.content[0].quantityOfApparitionInMovies", is(0)));
 
-                verify(planetService, times(1)).findAll();
+                verify(planetService, times(1)).findAll(any(Pageable.class));
 
             } catch (Exception e) {
                 e.printStackTrace();
