@@ -113,7 +113,7 @@ class PlanetResourceTests extends ControllerTest {
                         .andExpect(status().isNotFound())
                         .andExpect(jsonPath("$.status", is(HttpStatus.NOT_FOUND.value())))
                         .andExpect(jsonPath("$.detail", is("Planet not found.")))
-                        .andExpect(jsonPath("$.developerMessage", is("br.com.challenge.b2w.starWarsApi.exception.PlanetNotFoundException")))
+                        .andExpect(jsonPath("$.developerMessage", is("PlanetNotFoundException")))
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 
                 verify(planetService, times(1)).findById(id);
@@ -157,7 +157,7 @@ class PlanetResourceTests extends ControllerTest {
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
                         .andExpect(jsonPath("$.detail", is("Parameters with invalid format were sent.")))
-                        .andExpect(jsonPath("$.developerMessage", is("org.springframework.web.bind.MethodArgumentNotValidException")))
+                        .andExpect(jsonPath("$.developerMessage", is("MethodArgumentNotValidException")))
                         .andExpect(jsonPath("$.title", is("Ocorreu um erro!")))
                         .andExpect(jsonPath("$.field", is("name")))
                         .andExpect(jsonPath("$.fieldMessage", is("Name is mandatory")));

@@ -36,7 +36,7 @@ public class StarWarsApiExceptionHandler {
                 .status(BAD_REQUEST.value())
                 .title("Ocorreu um erro!")
                 .detail("Parameters with invalid format were sent.")
-                .developerMessage(ex.getClass().getName())
+                .developerMessage(ex.getClass().getSimpleName())
                 .field(fields)
                 .timestamp(LocalDateTime.now().format(ofPattern("dd/MM/yyyy HH:mm:ss")))
                 .fieldMessage(fieldErrors.stream().map(FieldError::getDefaultMessage).collect(joining(",")))
@@ -65,6 +65,6 @@ public class StarWarsApiExceptionHandler {
                 .builder()
                 .status(status.value())
                 .detail(ex.getMessage())
-                .developerMessage(ex.getClass().getName()).build();
+                .developerMessage(ex.getClass().getSimpleName()).build();
     }
 }
