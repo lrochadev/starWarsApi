@@ -7,6 +7,7 @@ import br.com.challenge.b2w.starWarsApi.utils.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
@@ -30,6 +31,7 @@ public class SwapiService {
     private final MessageUtil message;
     private final RestClient restClient;
 
+    @Cacheable(value = "swapi-planets", key = "#planetName.toLowerCase()")
     public SwapiDto consultSwAPI(final String planetName) {
 
         log.info("Finding planet : {}, in SWAPI.", planetName);
