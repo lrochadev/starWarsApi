@@ -56,11 +56,13 @@ public class RetryHandlerConfiguration implements HttpRequestRetryStrategy {
 
         if (executionCount > maxRetries) {
             retry = false;
-        } else if (HttpStatus.SC_FORBIDDEN == statusCode || HttpStatus.SC_NOT_FOUND == statusCode) {
-            retry = true;
+        } else if (isInList(exceptionBlacklist, exception)) {
+            retry = false;
         } else if (isInList(exceptionWhitelist, exception)) {
             retry = true;
-        } else if (isInList(exceptionBlacklist, exception)) {
+        } else if (statusCode == HttpStatus.SC_TOO_MANY_REQUESTS || statusCode >= HttpStatus.SC_SERVER_ERROR) {
+            retry = true;
+        } else if (statusCode > 0) {
             retry = false;
         }
 
@@ -69,7 +71,9 @@ public class RetryHandlerConfiguration implements HttpRequestRetryStrategy {
 
     @Override
     public boolean retryRequest(HttpResponse httpResponse, int executionCount, HttpContext context) {
-        return executionCount <= this.maxRetries;
+        int statusCode = httpResponse.getCode();
+        return executionCount <= this.maxRetries
+                && (statusCode == HttpStatus.SC_TOO_MANY_REQUESTS || statusCode >= HttpStatus.SC_SERVER_ERROR);
     }
 
     @Override

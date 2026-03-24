@@ -33,7 +33,7 @@ import java.util.Properties;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
-import static org.apache.hc.core5.util.Timeout.ofSeconds;
+import static org.apache.hc.core5.util.Timeout.ofMilliseconds;
 
 @Configuration
 @EnableConfigurationProperties(RetryMessageProperties.class)
@@ -92,9 +92,9 @@ public class ApplicationConfiguration {
         final HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 
         final RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(ofSeconds(properties.getConnectionRequestTimeout()))
-                .setConnectTimeout(ofSeconds(5000))
-                .setResponseTimeout(ofSeconds(properties.getSocketTimeout()))
+                .setConnectionRequestTimeout(ofMilliseconds(properties.getConnectionRequestTimeout()))
+                .setConnectTimeout(ofMilliseconds(properties.getConnectTimeout()))
+                .setResponseTimeout(ofMilliseconds(properties.getSocketTimeout()))
                 .build();
 
         final PoolingHttpClientConnectionManager poolingHttpClientConnectionManager = new PoolingHttpClientConnectionManager();
