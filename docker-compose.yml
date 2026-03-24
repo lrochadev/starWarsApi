@@ -11,18 +11,18 @@ services:
     networks:
       - production-network
 
-  appserver:
-    container_name: starwars-api
-    build:
-      context: .
-    ports:
-      - "8080:8080"
-    networks:
-      - production-network
-    environment:
-      SPRING_MONGODB_URI: mongodb://mongodb/starwars_db
-    depends_on:
-      - mongodb
+#  appserver:
+#    container_name: starwars-api
+#    build:
+#      context: .
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - production-network
+#    environment:
+#      SPRING_MONGODB_URI: mongodb://mongodb/starwars_db
+#    depends_on:
+#      - mongodb
 
 networks:
   production-network:
