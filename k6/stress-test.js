@@ -12,25 +12,33 @@ const deleteLatency  = new Trend('delete_planet_latency', true);
 const errorRate      = new Rate('error_rate');
 const planetsCreated = new Counter('planets_created');
 
-// Ramp-up gradual com 2 picos no meio
-// Total de ~5 minutos
+// ramping-arrival-rate: controla iterações/s para ~10.000 chamadas SWAPI (~50k requests totais)
+// Total de ~230s
 export const options = {
-  stages: [
-    { duration: '30s', target: 10 },   // Warm-up
-    { duration: '30s', target: 50 },   // Ramp-up moderado
-    { duration: '30s', target: 100 },  // Carga base
-    { duration: '20s', target: 200 },  // 1º PICO
-    { duration: '20s', target: 50 },   // Recuperação
-    { duration: '30s', target: 100 },  // Estabiliza
-    { duration: '20s', target: 200 },  // 2º PICO
-    { duration: '20s', target: 50 },   // Recuperação
-    { duration: '30s', target: 0 },    // Ramp-down
-  ],
+  scenarios: {
+    stressTest: {
+      executor: 'ramping-arrival-rate',
+      preAllocatedVUs: 100,
+      maxVUs: 200,
+      timeUnit: '1s',
+      stages: [
+        { duration: '30s', target: 20  },  // Warm-up         → ~300 iter
+        { duration: '30s', target: 50  },  // Ramp-up         → ~1.050 iter
+        { duration: '30s', target: 50  },  // Base load       → ~1.500 iter
+        { duration: '20s', target: 100 },  // 1º Pico         → ~1.500 iter
+        { duration: '20s', target: 30  },  // Recuperação     → ~1.300 iter
+        { duration: '30s', target: 50  },  // Estabiliza      → ~1.200 iter
+        { duration: '20s', target: 100 },  // 2º Pico         → ~1.500 iter
+        { duration: '20s', target: 30  },  // Recuperação     → ~1.300 iter
+        { duration: '30s', target: 0   },  // Ramp-down       → ~450 iter
+      ],
+    },
+  },
   thresholds: {
-    'http_req_duration': ['p(95)<500'],
-    'error_rate': ['rate<0.05'],
-    'create_planet_latency': ['p(95)<800'],
-    'list_planets_latency': ['p(95)<500'],
+    'http_req_duration':        ['p(95)<500'],
+    'error_rate':               ['rate<0.05'],
+    'create_planet_latency':    ['p(95)<800'],
+    'list_planets_latency':     ['p(95)<500'],
     'get_planet_by_id_latency': ['p(95)<300'],
   },
 };
