@@ -3,6 +3,7 @@ package br.com.challenge.b2w.starWarsApi.services;
 import br.com.challenge.b2w.starWarsApi.dto.PlanetDto;
 import br.com.challenge.b2w.starWarsApi.dto.swapi.SwapiDto;
 import br.com.challenge.b2w.starWarsApi.exception.PlanetNotFoundException;
+import br.com.challenge.b2w.starWarsApi.exception.SWAPIException;
 import br.com.challenge.b2w.starWarsApi.mappers.PlanetMapper;
 import br.com.challenge.b2w.starWarsApi.model.Planet;
 import br.com.challenge.b2w.starWarsApi.repository.PlanetRepository;
@@ -68,8 +69,9 @@ public class PlanetServiceImpl implements PlanetService {
                 final SwapiDto swapiDto = swapiService.consultSwAPI(planet.getName());
                 planet.setQuantityOfApparitionInMovies(swapiService.getQuantityOfApparitionInMovies(planet.getName(), swapiDto));
                 planetRepository.save(planet);
-            } catch (CallNotPermittedException e) {
-                log.warn("SWAPI circuit breaker is OPEN for planet '{}', returning count=0 as fallback", planet.getName());
+            } catch (CallNotPermittedException | SWAPIException e) {
+                log.warn("SWAPI unavailable for planet '{}' ({}), returning count=0 as fallback",
+                        planet.getName(), e.getClass().getSimpleName());
                 planet.setQuantityOfApparitionInMovies(0);
             }
         }

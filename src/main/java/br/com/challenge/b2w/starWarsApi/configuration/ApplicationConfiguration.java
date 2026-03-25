@@ -46,10 +46,12 @@ public class ApplicationConfiguration {
     @Bean
     public CircuitBreaker swapiCircuitBreaker() {
         CircuitBreakerConfig config = CircuitBreakerConfig.custom()
-                .failureRateThreshold(50)
-                .waitDurationInOpenState(Duration.ofSeconds(30))
+                .failureRateThreshold(30)
+                .slowCallDurationThreshold(Duration.ofMillis(800))
+                .slowCallRateThreshold(50)
+                .waitDurationInOpenState(Duration.ofSeconds(60))
                 .slidingWindowSize(10)
-                .minimumNumberOfCalls(5)
+                .minimumNumberOfCalls(3)
                 .permittedNumberOfCallsInHalfOpenState(3)
                 .build();
         return CircuitBreakerRegistry.of(config).circuitBreaker("swapi");
