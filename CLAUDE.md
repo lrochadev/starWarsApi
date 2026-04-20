@@ -31,20 +31,39 @@ k6 run k6/stress-test.js
 
 Spring Boot 4 / Java 21 layered application integrating with the external [SWAPI](https://swapi.dev) to enrich planet data with movie appearance counts.
 
-### SWAPI Enrichment — Lazy Pattern (CRITICAL)
+### SWAPI Enrichment — Async Post-Save with Lazy Fallback (CRITICAL)
 
-Planet creation is **decoupled** from SWAPI. The `quantityOfApparitionInMovies` field is `null` after `save()` and populated lazily on first read:
+Planet creation is **decoupled** from SWAPI. The `quantityOfApparitionInMovies` field is `null` after `save()` and enriched **asynchronously after persist**, with a lazy fallback on read for defense in depth:
 
 ```
-save()      → persist planet with quantityOfApparitionInMovies=null (never calls SWAPI)
-findById()
-findAll()   → enrichAndSaveIfNeeded(planet):
-findByName()     if null → SwapiService.consultSwAPI() [cached + circuit breaker]
-                          → persist enriched planet
-                          → return DTO
+save() → persist planet with quantityOfApparitionInMovies=null (never calls SWAPI)
+       → eventPublisher.publishEvent(PlanetCreatedEvent(id, name))
+                                          │
+              ┌───────────────────────────┘  (async, off the request thread)
+              ▼
+PlanetEnrichmentListener.onPlanetCreated  (@Async @EventListener)
+  → PlanetEnrichmentUpdater.enrich        (@Retryable, 3 attempts, 200ms × 2 backoff)
+      → SwapiService.consultSwAPI()       [Caffeine cache + Resilience4j CB]
+      → planetRepository.save(enriched)   (background write)
+  catch CallNotPermittedException → log; lazy fallback will try on read
+  @Recover (SWAPIException) → log; lazy fallback will try on read
+
+findById() / findAll() / findByName()
+  → enrichAndSaveIfNeeded(planet):
+      if quantityOfApparitionInMovies == null  (async pending OR async failed):
+          SwapiService.consultSwAPI()  [cached]
+          # NO save() here — read path is pure
+      return DTO
 ```
 
 **Do NOT revert to calling SWAPI in `save()`** — this broke availability when SWAPI was down.
+**Do NOT add `planetRepository.save()` back inside `enrichAndSaveIfNeeded`** — write-during-read kills latency under load. Async pós-save (with `@Retryable` + `@Recover`) is the persistence path.
+
+### Async + Retry wiring
+
+- `@EnableAsync` and `@EnableRetry` are on `StarWarsApiApplication`
+- `@Retryable` lives on `PlanetEnrichmentUpdater`, **not** on `PlanetEnrichmentListener` — `@Retryable` requires a Spring AOP proxy and self-invocation from inside the listener would bypass it. Keep them in separate beans.
+- `@Recover` method must match the exception type and the same argument list
 
 ### Circuit Breaker (Resilience4j)
 
@@ -65,17 +84,29 @@ findByName()     if null → SwapiService.consultSwAPI() [cached + circuit break
 
 **Request flow:**
 ```
-PlanetResource (REST) → PlanetServiceImpl → PlanetRepository (MongoDB)
-                                          ↘ SwapiService (lazy, cached, circuit breaker)
+PlanetResource (REST) → PlanetServiceImpl
+   save()  → PlanetRepository.save() → publishEvent(PlanetCreatedEvent)
+                                       ↘ PlanetEnrichmentListener (@Async)
+                                          → PlanetEnrichmentUpdater (@Retryable)
+                                              → SwapiService → swapi.dev
+                                              → PlanetRepository.save(enriched)
+   reads  → enrichAndSaveIfNeeded (lazy fallback, no write)
+            ↘ SwapiService (cached, circuit breaker) — only if still null
 ```
 
 **Key layers:**
 - `resources/` — REST controllers (`PlanetResource` at `/api/planets`)
-- `services/` — Business logic; `PlanetServiceImpl` orchestrates lazy enrichment; `SwapiService` handles external HTTP
+- `services/` — Business logic
+  - `PlanetServiceImpl` — `save()` publishes event; reads use lazy fallback (no write)
+  - `PlanetEnrichmentListener` — `@Async @EventListener`, catches `CallNotPermittedException`
+  - `PlanetEnrichmentUpdater` — `@Retryable` SWAPI call + persist; `@Recover` for exhaustion
+  - `PlanetCreatedEvent` — record `(id, name)`
+  - `SwapiService` — external HTTP call with `@Cacheable` + Circuit Breaker
 - `repository/` — `PlanetRepository` extends `MongoRepository<Planet, String>`
+- `model/` — `Planet` (`@Indexed` on `name` for IXSCAN)
 - `dto/` — `PlanetDto` (API contract), `SwapiDto`/`PropertiesDto` (external API response)
 - `mappers/` — MapStruct mapper (`@Mapper(componentModel = "spring")`) between `Planet` and `PlanetDto`
-- `configuration/` — `ApplicationConfiguration`: `RestClient`, `CircuitBreaker` bean, `Caffeine` cache, `JsonMapper`, `MessageSource`
+- `configuration/` — `ApplicationConfiguration`: `RestClient` (Jackson 3 converter), `CircuitBreaker` bean, `Caffeine` cache, `MessageSource`. HttpClient 5 wired via `PoolingHttpClientConnectionManagerBuilder` + `ConnectionConfig` (no deprecated APIs).
 - `infrastructure/` — `RetryHandlerConfiguration`: retries 429 and 5xx only (NOT 403/404)
 - `exception/` — `StarWarsApiExceptionHandler` (`@RestControllerAdvice`): 400 (validation), 404 (not found), 500 (SWAPI)
 
@@ -112,10 +143,20 @@ The domain model uses `Integer` (not `int`) to allow `null` as the sentinel valu
 ### Locale is request-scoped
 `MessageUtil` uses `LocaleContextHolder.getLocale()` — the locale follows the request's `Accept-Language` header, not a hardcoded PT-BR.
 
+### `@Retryable` requires AOP proxy — separate beans
+`PlanetEnrichmentListener` calls `PlanetEnrichmentUpdater.enrich()` instead of having `@Retryable` directly on the listener. Spring AOP cannot intercept self-invocation; if `@Retryable` is on a method called from the same class, retry silently does nothing. **Keep the retry method in a separate Spring bean.**
+
+### Async listener silences `CallNotPermittedException`, but `@Retryable` only retries `SWAPIException`
+`@Retryable(retryFor = SWAPIException.class)` on the updater — circuit-open errors are **not** retried (would just thrash). The listener catches `CallNotPermittedException` outside the retried call and logs without throwing. The lazy fallback on read remains the safety net.
+
 ## Spring Boot 4 Notes
 
 - **MongoDB URI property changed:** Spring Boot 4 uses `spring.mongodb.uri` (not `spring.data.mongodb.uri` from SB3)
 - **RestClient replaces RestTemplate:** `RestTemplate` is in maintenance mode in Spring Framework 7
+- **Jackson 3 migration:** `MappingJackson2HttpMessageConverter` is deprecated in SF7. Use `JacksonJsonHttpMessageConverter` (`tools.jackson.*` Jackson 3). The old `JsonMapper` bean (`com.fasterxml.jackson.databind.json.JsonMapper`) was removed — defaults are sufficient for outbound SWAPI deserialization.
+- **RestClient.Builder API:** `messageConverters(Consumer<List<...>>)` is deprecated. Use `configureMessageConverters(configurer -> configurer.withJsonConverter(...).withStringConverter(...))`.
+- **HttpClient 5 connection config:** `RequestConfig.setConnectTimeout` and `PoolingHttpClientConnectionManager.setValidateAfterInactivity` are deprecated. Both moved to `ConnectionConfig`, applied via `PoolingHttpClientConnectionManagerBuilder.create().setDefaultConnectionConfig(...)`.
+- **Spring Retry is not in the SB BOM:** `spring-retry` (with explicit version) and `spring-aspects` must be added to `pom.xml`. `@EnableRetry` is on `StarWarsApiApplication`.
 - **Docker:** multi-stage Dockerfile — `eclipse-temurin:21-jdk-alpine` for build, `eclipse-temurin:21-jre-alpine` for runtime; MongoDB URI passed via `SPRING_MONGODB_URI` env var
 
 ## API Documentation
