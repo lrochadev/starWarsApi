@@ -1,24 +1,17 @@
 package br.com.challenge.b2w.starWarsApi.configuration;
 
 import br.com.challenge.b2w.starWarsApi.infrastructure.RetryHandlerConfiguration;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.util.DefaultIndenter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -28,16 +21,12 @@ import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.client.RestClient;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Properties;
-
-import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
-import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
-import static org.apache.hc.core5.util.Timeout.ofMilliseconds;
 
 @Configuration
 @EnableConfigurationProperties(RetryMessageProperties.class)
@@ -70,55 +59,34 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    public JsonMapper jsonMapper() {
-
-        final DefaultIndenter defaultIndenter = new DefaultIndenter("  ", "\n");
-
-        final DefaultPrettyPrinter defaultPrettyPrinter = new DefaultPrettyPrinter();
-        defaultPrettyPrinter.indentArraysWith(defaultIndenter);
-        defaultPrettyPrinter.indentObjectsWith(defaultIndenter);
-
-        return JsonMapper.builder()
-                .defaultPrettyPrinter(defaultPrettyPrinter)
-                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-                .disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES)
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE)
-                .disable(SerializationFeature.INDENT_OUTPUT)
-                .serializationInclusion(JsonInclude.Include.NON_NULL)
-                .visibility(PropertyAccessor.GETTER, NONE)
-                .visibility(PropertyAccessor.SETTER, NONE)
-                .visibility(PropertyAccessor.FIELD, ANY)
-                .addModule(new JavaTimeModule())
-                .addModule(new SimpleModule())
-                .build();
-    }
-
-    @Bean
     public RestClient restClient(final RetryMessageProperties properties) {
         return RestClient.builder()
                 .requestFactory(clientHttpRequestFactory(properties))
-                .messageConverters(converters -> {
-                    converters.clear();
-                    converters.add(new MappingJackson2HttpMessageConverter(jsonMapper()));
-                    converters.add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
-                })
+                .configureMessageConverters(configurer -> configurer
+                        .withJsonConverter(new JacksonJsonHttpMessageConverter())
+                        .withStringConverter(new StringHttpMessageConverter(StandardCharsets.UTF_8)))
                 .build();
     }
 
     private ClientHttpRequestFactory clientHttpRequestFactory(final RetryMessageProperties properties) {
         final HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 
-        final RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(ofMilliseconds(properties.getConnectionRequestTimeout()))
-                .setConnectTimeout(ofMilliseconds(properties.getConnectTimeout()))
-                .setResponseTimeout(ofMilliseconds(properties.getSocketTimeout()))
+        final ConnectionConfig connectionConfig = ConnectionConfig.custom()
+                .setConnectTimeout(Timeout.ofMilliseconds(properties.getConnectTimeout()))
+                .setSocketTimeout(Timeout.ofMilliseconds(properties.getSocketTimeout()))
+                .setValidateAfterInactivity(TimeValue.ofSeconds(properties.getValidateAfterInactivity()))
                 .build();
 
-        final PoolingHttpClientConnectionManager poolingHttpClientConnectionManager = new PoolingHttpClientConnectionManager();
-        poolingHttpClientConnectionManager.setMaxTotal(properties.getMaxConnections());
-        poolingHttpClientConnectionManager.setDefaultMaxPerRoute(properties.getMaxPerRoute());
-        poolingHttpClientConnectionManager.setValidateAfterInactivity(TimeValue.ofSeconds(properties.getValidateAfterInactivity()));
+        final RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(Timeout.ofMilliseconds(properties.getConnectionRequestTimeout()))
+                .setResponseTimeout(Timeout.ofMilliseconds(properties.getSocketTimeout()))
+                .build();
+
+        final PoolingHttpClientConnectionManager poolingHttpClientConnectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+                .setMaxConnTotal(properties.getMaxConnections())
+                .setMaxConnPerRoute(properties.getMaxPerRoute())
+                .setDefaultConnectionConfig(connectionConfig)
+                .build();
 
         final CloseableHttpClient httpClient = HttpClientBuilder.create()
                 .setConnectionManager(poolingHttpClientConnectionManager)
