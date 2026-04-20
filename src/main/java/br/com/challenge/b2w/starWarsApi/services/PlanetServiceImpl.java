@@ -11,6 +11,7 @@ import br.com.challenge.b2w.starWarsApi.utils.MessageUtil;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,10 +31,12 @@ public class PlanetServiceImpl implements PlanetService {
     private final MessageUtil message;
     private final SwapiService swapiService;
     private final PlanetRepository planetRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public PlanetDto save(final PlanetDto planetDto) {
         final Planet saved = planetRepository.save(planetMapper.toDomain(planetDto));
+        eventPublisher.publishEvent(new PlanetCreatedEvent(saved.getId(), saved.getName()));
         return planetMapper.toDto(saved);
     }
 
@@ -68,7 +71,6 @@ public class PlanetServiceImpl implements PlanetService {
             try {
                 final SwapiDto swapiDto = swapiService.consultSwAPI(planet.getName());
                 planet.setQuantityOfApparitionInMovies(swapiService.getQuantityOfApparitionInMovies(planet.getName(), swapiDto));
-                planetRepository.save(planet);
             } catch (CallNotPermittedException | SWAPIException e) {
                 log.warn("SWAPI unavailable for planet '{}' ({}), returning count=0 as fallback",
                         planet.getName(), e.getClass().getSimpleName());
