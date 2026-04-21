@@ -27,12 +27,12 @@ class PlanetRepositoryTests extends ContainerBase {
     private PlanetRepository planetRepository;
 
     @BeforeEach
-    public void clearBeforeInit() {
+    void clearBeforeInit() {
         clearDb();
     }
 
     @AfterEach
-    public void clearAfterInit() {
+    void clearAfterInit() {
         clearDb();
     }
 

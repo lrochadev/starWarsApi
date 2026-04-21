@@ -48,7 +48,7 @@ public class RetryHandlerConfiguration implements HttpRequestRetryStrategy {
 
         try {
 
-            statusCode = HttpCoreContext.adapt(context).getResponse().getCode();
+            statusCode = HttpCoreContext.cast(context).getResponse().getCode();
 
         } catch (Exception ex) {
             log.warn("It wasnt possible to retrieve http status code");

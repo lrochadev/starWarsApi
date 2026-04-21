@@ -42,7 +42,7 @@ class PlanetResourceTests extends ControllerTest {
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         configure(new PlanetResource(planetService));
     }
 

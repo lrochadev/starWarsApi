@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -21,7 +21,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExc
 import org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod;
 
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.function.Consumer;
 
@@ -38,8 +37,7 @@ public abstract class ControllerTest {
 
     protected ControllerTest() {
 
-        final MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
-        mappingJackson2HttpMessageConverter.setDefaultCharset(StandardCharsets.UTF_8);
+        final JacksonJsonHttpMessageConverter jacksonConverter = new JacksonJsonHttpMessageConverter();
 
         exceptionHandlerExceptionResolver = new ExceptionHandlerExceptionResolver() {
             @Override
@@ -49,7 +47,7 @@ public abstract class ControllerTest {
             }
         };
 
-        exceptionHandlerExceptionResolver.setMessageConverters(Collections.singletonList(mappingJackson2HttpMessageConverter));
+        exceptionHandlerExceptionResolver.setMessageConverters(Collections.singletonList(jacksonConverter));
         exceptionHandlerExceptionResolver.afterPropertiesSet();
 
         final DefaultIndenter defaultIndenter = new DefaultIndenter("  ", "\n");
@@ -65,7 +63,7 @@ public abstract class ControllerTest {
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE)
                 .disable(SerializationFeature.INDENT_OUTPUT)
-                .serializationInclusion(JsonInclude.Include.NON_NULL)
+                .defaultPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.ALWAYS))
                 .visibility(PropertyAccessor.GETTER, NONE)
                 .visibility(PropertyAccessor.SETTER, NONE)
                 .visibility(PropertyAccessor.FIELD, ANY)

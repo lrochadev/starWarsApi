@@ -1,7 +1,7 @@
 package br.com.challenge.b2w.starWarsApi;
 
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.mongodb.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 
 public abstract class ContainerBase {
