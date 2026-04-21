@@ -1,4 +1,5 @@
-[![CircleCI](https://circleci.com/gh/lrochadev/starWarsApi/tree/master.svg?style=shield)](https://circleci.com/gh/lrochadev/starWarsApi/tree/master)
+[![CircleCI](https://circleci.com/gh/lrochadev/starWarsApi/tree/main.svg?style=shield)](https://circleci.com/gh/lrochadev/starWarsApi/tree/main)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 # Star Wars API
 
@@ -21,6 +22,56 @@ REST API that manages Star Wars planets, enriched with movie appearance data fro
 
 - Java 21
 - Docker (with Compose plugin)
+
+## Installation
+
+**Clone the repository:**
+```bash
+git clone https://github.com/lrochadev/starWarsApi.git
+cd starWarsApi
+```
+
+**Build and run the full stack (recommended):**
+```bash
+docker compose up -d
+```
+
+The application will start on `http://localhost:8080`. MongoDB runs in a separate container.
+
+**For local development (requires MongoDB on port 27017):**
+```bash
+mvn clean package -DskipTests
+mvn spring-boot:run
+```
+
+## Usage
+
+### Quick start
+
+Once the application is running, create and list planets:
+
+**Create a planet:**
+```bash
+curl -X POST http://localhost:8080/api/planets \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Tatooine",
+    "climate": "Arid",
+    "terrain": "Desert"
+  }'
+```
+
+**List planets with pagination:**
+```bash
+curl "http://localhost:8080/api/planets?page=0&size=10"
+```
+
+**Find a planet by name:**
+```bash
+curl "http://localhost:8080/api/planets/name/tatooine"
+```
+
+**Full API documentation:** [Swagger UI](http://localhost:8080/swagger-ui/index.html)
 
 ## Build & Run
 
@@ -45,22 +96,6 @@ mvn spring-boot:run
 | `DELETE` | `/api/planets/{id}` | Delete a planet |
 | `GET` | `/actuator/health` | Health check |
 | `GET` | `/actuator/metrics` | Metrics |
-
-**Example — create a planet:**
-```bash
-curl -X POST http://localhost:8080/api/planets \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Tatooine", "climate": "Arid", "terrain": "Desert"}'
-```
-
-**Example — list with pagination:**
-```bash
-curl "http://localhost:8080/api/planets?page=0&size=10"
-```
-
-## Swagger UI
-
-[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 ## Architecture
 
@@ -185,6 +220,16 @@ All values configurable via `application.properties` under `resttemplate.pool.*`
 - **MongoDB:** `spring.mongodb.uri=mongodb://localhost:27017/starwars_db` (local) or `mongodb://mongodb/starwars_db` (Docker via env `SPRING_MONGODB_URI`)
 - **Docker Compose:** multi-stage Dockerfile builds and runs the app + MongoDB; health check on `/actuator/health`
 - **CI:** GitHub Actions — Amazon Corretto 21, `mvn -B package --fail-at-end`, publishes JUnit test report as artifact
+
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting pull requests.
+
+Before contributing, please review our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) — we are committed to providing a welcoming and inclusive environment for all contributors.
+
+## License
+
+This project is licensed under the **Apache License 2.0** — see [LICENSE](LICENSE) for details.
 
 ## Spring Boot 4 Notes
 
