@@ -10,9 +10,11 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
-import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
-import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
+import org.apache.hc.client5.http.ssl.TlsSocketStrategy;
+import org.apache.hc.core5.ssl.SSLContexts;
+import org.apache.hc.core5.ssl.TrustStrategy;
 import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,19 +27,12 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestClient;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.security.cert.X509Certificate;
-import java.util.List;
-
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Properties;
-import java.util.function.Consumer;
 
 
 @Configuration
@@ -71,7 +66,7 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    public RestClient restClient(final RetryMessageProperties properties) throws java.security.NoSuchAlgorithmException, java.security.KeyManagementException {
+    public RestClient restClient(final RetryMessageProperties properties) throws java.security.NoSuchAlgorithmException, java.security.KeyStoreException, java.security.KeyManagementException {
         return RestClient.builder()
                 .requestFactory(clientHttpRequestFactory(properties))
                 .configureMessageConverters(clientBuilder -> clientBuilder
@@ -81,7 +76,7 @@ public class ApplicationConfiguration {
                 .build();
     }
 
-    private ClientHttpRequestFactory clientHttpRequestFactory(final RetryMessageProperties properties) throws java.security.NoSuchAlgorithmException, java.security.KeyManagementException {
+    private ClientHttpRequestFactory clientHttpRequestFactory(final RetryMessageProperties properties) throws java.security.NoSuchAlgorithmException, java.security.KeyStoreException, java.security.KeyManagementException {
         final HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 
         final ConnectionConfig connectionConfig = ConnectionConfig.custom()
@@ -95,21 +90,13 @@ public class ApplicationConfiguration {
                 .setResponseTimeout(Timeout.ofMilliseconds(properties.getSocketTimeout()))
                 .build();
 
-        TrustManager[] trustAll = new TrustManager[]{new X509TrustManager() {
-            public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
-            public void checkClientTrusted(X509Certificate[] c, String a) {}
-            public void checkServerTrusted(X509Certificate[] c, String a) {}
-        }};
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, trustAll, null);
-
-        SSLConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactoryBuilder.create()
-                .setSslContext(sslContext)
-                .setHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+        SSLContext sslContext = SSLContexts.custom()
+                .loadTrustMaterial((TrustStrategy) (chain, authType) -> true)
                 .build();
+        TlsSocketStrategy tlsStrategy = new DefaultClientTlsStrategy(sslContext, NoopHostnameVerifier.INSTANCE);
 
         final PoolingHttpClientConnectionManager poolingHttpClientConnectionManager = PoolingHttpClientConnectionManagerBuilder.create()
-                .setSSLSocketFactory(sslSocketFactory)
+                .setTlsSocketStrategy(tlsStrategy)
                 .setMaxConnTotal(properties.getMaxConnections())
                 .setMaxConnPerRoute(properties.getMaxPerRoute())
                 .setDefaultConnectionConfig(connectionConfig)
