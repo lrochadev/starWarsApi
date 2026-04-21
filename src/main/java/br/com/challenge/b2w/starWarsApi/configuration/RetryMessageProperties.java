@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 @Getter
 @Setter
 @Validated
-@ConfigurationProperties(prefix = "resttemplate.pool")
+@ConfigurationProperties(prefix = "restclient.pool")
 public class RetryMessageProperties {
 
     @NotNull
