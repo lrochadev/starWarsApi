@@ -21,12 +21,15 @@ import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestClient;
+
+import java.util.List;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Properties;
+
 
 @Configuration
 @EnableConfigurationProperties(RetryMessageProperties.class)
@@ -62,9 +65,9 @@ public class ApplicationConfiguration {
     public RestClient restClient(final RetryMessageProperties properties) {
         return RestClient.builder()
                 .requestFactory(clientHttpRequestFactory(properties))
-                .configureMessageConverters(configurer -> configurer
-                        .withJsonConverter(new JacksonJsonHttpMessageConverter())
-                        .withStringConverter(new StringHttpMessageConverter(StandardCharsets.UTF_8)))
+                .messageConverters(List.of(
+                        new MappingJackson2HttpMessageConverter(),
+                        new StringHttpMessageConverter(StandardCharsets.UTF_8)))
                 .build();
     }
 
