@@ -11,23 +11,23 @@ services:
     networks:
       - production-network
 
-  appserver:
-    container_name: starwars-api
-    build:
-      context: .
-    ports:
-      - "8080:8080"
-    networks:
-      - production-network
-    environment:
-      SPRING_MONGODB_URI: mongodb://mongodb/starwars_db
-    depends_on:
-      - mongodb
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+#  appserver:
+#    container_name: starwars-api
+#    build:
+#      context: .
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - production-network
+#    environment:
+#      SPRING_MONGODB_URI: mongodb://mongodb/starwars_db
+#    depends_on:
+#      - mongodb
+#    healthcheck:
+#      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
 
 networks:
   production-network:
